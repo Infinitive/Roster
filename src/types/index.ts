@@ -41,6 +41,8 @@ export interface Performer {
   id: string;
   name: string;
   normalizedName: string;
+  aliases?: string[];
+  createdAt?: number;
 }
 
 export interface Tag {
@@ -48,6 +50,9 @@ export interface Tag {
   name: string;
   normalizedName: string;
   category: string;
+  isCanonical?: boolean;
+  synonyms?: string[];
+  createdAt?: number;
 }
 
 export interface WatchlistItem {
@@ -60,7 +65,9 @@ export interface WatchlistItem {
 
 export interface CollectionSettings {
   id: string;
+  schemaVersion?: number;
   vocabularies: Record<string, string[]>;
   thresholds: Record<string, number>;
   preferences: Record<string, any>;
+  updatedAt?: number;
 }

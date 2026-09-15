@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Video } from '../types';
+import { Video, Tag, Performer } from '../types';
+import { matchCanonicalTag, CANONICAL_30_TAGS } from '../data/canonicalTags';
 
 export function parseFilename(filename: string, relativePath: string): Partial<Video> {
   let performerDisplay = '';
@@ -66,21 +67,102 @@ export function normalizeResolution(res: string): string {
   return 'Unknown';
 }
 
+/**
+ * Extracts normalized Tag entities and their IDs from raw tag text.
+ */
+export function extractTagsFromText(originalTags: string): { tagIds: string[]; tags: Tag[] } {
+  if (!originalTags || !originalTags.trim()) {
+    return { tagIds: [], tags: [] };
+  }
+
+  const parts = originalTags.split(',').map(p => p.trim()).filter(Boolean);
+  const tagIds: string[] = [];
+  const tags: Tag[] = [];
+  const seenNorms = new Set<string>();
+
+  for (const raw of parts) {
+    const canonical = matchCanonicalTag(raw);
+    const displayName = canonical ? canonical.name : raw;
+    const norm = displayName.toLowerCase();
+
+    if (seenNorms.has(norm)) continue;
+    seenNorms.add(norm);
+
+    const id = canonical 
+      ? `TAG-${norm.replace(/[^a-z0-9]/g, '-')}`
+      : `TAG-custom-${norm.replace(/[^a-z0-9]/g, '-')}`;
+
+    tagIds.push(id);
+    tags.push({
+      id,
+      name: displayName,
+      normalizedName: norm,
+      category: canonical ? canonical.category : 'General',
+      isCanonical: !!canonical,
+      synonyms: canonical?.synonyms,
+      createdAt: Date.now()
+    });
+  }
+
+  return { tagIds, tags };
+}
+
+/**
+ * Extracts normalized Performer entities and their IDs from raw performer display text.
+ */
+export function extractPerformersFromText(performerDisplay: string): { performerIds: string[]; performers: Performer[] } {
+  if (!performerDisplay || !performerDisplay.trim()) {
+    return { performerIds: [], performers: [] };
+  }
+
+  const parts = performerDisplay
+    .split(/[,&/]| and /i)
+    .map(p => p.trim())
+    .filter(p => p && p.toLowerCase() !== 'unknown');
+
+  const performerIds: string[] = [];
+  const performers: Performer[] = [];
+  const seenNorms = new Set<string>();
+
+  for (const raw of parts) {
+    const norm = raw.toLowerCase();
+    if (seenNorms.has(norm)) continue;
+    seenNorms.add(norm);
+
+    const id = `PERF-${norm.replace(/[^a-z0-9]/g, '-')}`;
+    performerIds.push(id);
+    performers.push({
+      id,
+      name: raw,
+      normalizedName: norm,
+      createdAt: Date.now()
+    });
+  }
+
+  return { performerIds, performers };
+}
+
 export function createNewVideo(filename: string, relativePath: string, overrides: Partial<Video> = {}): Video {
   const parsed = parseFilename(filename, relativePath);
   const now = Date.now();
   
+  const rawTags = overrides.originalTags !== undefined ? overrides.originalTags : (parsed.originalTags || '');
+  const rawPerfs = overrides.performerDisplay !== undefined ? overrides.performerDisplay : (parsed.performerDisplay || '');
+
+  const extractedTags = extractTagsFromText(rawTags);
+  const extractedPerfs = extractPerformersFromText(rawPerfs);
+
   return {
     id: `T9-${uuidv4()}`,
     filename,
     relativePath,
     participantCount: parsed.participantCount || 'Unknown',
     folder: parsed.folder || 'Unknown',
-    performerIds: [],
-    performerDisplay: parsed.performerDisplay || '',
+    performerIds: overrides.performerIds || extractedPerfs.performerIds,
+    performerDisplay: rawPerfs,
     title: parsed.title || filename,
-    tagIds: [],
-    originalTags: parsed.originalTags || '',
+    tagIds: overrides.tagIds || extractedTags.tagIds,
+    originalTags: rawTags,
     resolution: parsed.resolution || 'Unknown',
     originalResolution: parsed.originalResolution || 'Unknown',
     source: 'Unknown',

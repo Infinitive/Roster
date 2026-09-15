@@ -1,4 +1,4 @@
-import { Video, Session } from '../types';
+import { Video, Session, Tag, Performer } from '../types';
 import { 
   FullAnalytics, 
   CollectionSummary, 
@@ -18,8 +18,6 @@ import {
 } from '../types/analytics';
 
 function calculateRepresentationLevel(percentage: number, distinctCount: number): RepresentationLevel {
-  // Dynamic thresholding based on cardinality could go here.
-  // For Phase 3, we use a straightforward heuristic.
   if (percentage >= 20) return 'Highly represented';
   if (percentage >= 5) return 'Moderately represented';
   if (percentage >= 1) return 'Lightly represented';
@@ -32,9 +30,26 @@ function getConfidence(samples: number): DataConfidence {
   return 'Insufficient Data';
 }
 
-export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAnalytics {
+export function calculateAnalytics(
+  videos: Video[], 
+  sessions: Session[],
+  persistedTags: Tag[] = [],
+  persistedPerformers: Performer[] = []
+): FullAnalytics {
   const totalVideos = videos.length;
   
+  // Tag ID to display name mapping
+  const tagIdToName = new Map<string, string>();
+  for (const t of persistedTags) {
+    tagIdToName.set(t.id, t.name);
+  }
+
+  // Performer ID to display name mapping
+  const perfIdToName = new Map<string, string>();
+  for (const p of persistedPerformers) {
+    perfIdToName.set(p.id, p.name);
+  }
+
   // 1. Health
   const health: MetadataHealth = {
     missingPerformer: 0,
@@ -57,19 +72,47 @@ export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAn
 
   videos.forEach(v => {
     let affected = false;
-    if (!v.performerDisplay) { health.missingPerformer++; affected = true; }
+    if (!v.performerDisplay || v.performerDisplay.trim() === '') { health.missingPerformer++; affected = true; }
     if (!v.title || v.title === v.filename) { health.missingTitle++; affected = true; }
-    if (!v.originalTags) { health.missingTags++; affected = true; }
+    if (!v.originalTags || v.originalTags.trim() === '') { health.missingTags++; affected = true; }
     if (v.participantCount === 'Unknown') { health.missingParticipantCount++; affected = true; }
     if (v.resolution === 'Unknown') { health.unknownResolution++; affected = true; }
     if (!knownFolders.includes(v.folder)) { health.unrecognizedFolder++; affected = true; }
     if (affected) health.totalAffected++;
 
-    const tags = v.originalTags ? v.originalTags.split(',').map(t => t.trim()).filter(Boolean) : [];
-    tags.forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1);
+    // Resolve Tags for this video
+    const tagsForThisVideo = new Set<string>();
+    if (v.tagIds && v.tagIds.length > 0) {
+      for (const tId of v.tagIds) {
+        const name = tagIdToName.get(tId);
+        if (name) tagsForThisVideo.add(name);
+      }
+    }
+    if (tagsForThisVideo.size === 0 && v.originalTags) {
+      v.originalTags.split(',').map(t => t.trim()).filter(Boolean).forEach(t => tagsForThisVideo.add(t));
+    }
+    tagsForThisVideo.forEach(t => {
+      tagCounts[t] = (tagCounts[t] || 0) + 1;
+    });
 
-    const perfs = v.performerDisplay ? v.performerDisplay.split(',').map(p => p.trim()).filter(Boolean) : [];
-    perfs.forEach(p => performerCounts[p] = (performerCounts[p] || 0) + 1);
+    // Resolve Performers for this video
+    const perfsForThisVideo = new Set<string>();
+    if (v.performerIds && v.performerIds.length > 0) {
+      for (const pId of v.performerIds) {
+        const name = perfIdToName.get(pId);
+        if (name) perfsForThisVideo.add(name);
+      }
+    }
+    if (perfsForThisVideo.size === 0 && v.performerDisplay) {
+      v.performerDisplay
+        .split(/[,&/]| and /i)
+        .map(p => p.trim())
+        .filter(p => p && p.toLowerCase() !== 'unknown')
+        .forEach(p => perfsForThisVideo.add(p));
+    }
+    perfsForThisVideo.forEach(p => {
+      performerCounts[p] = (performerCounts[p] || 0) + 1;
+    });
 
     folderCounts[v.folder] = (folderCounts[v.folder] || 0) + 1;
     resolutionCounts[v.resolution] = (resolutionCounts[v.resolution] || 0) + 1;
@@ -229,7 +272,14 @@ export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAn
 
   // Tag Analytics
   const tags: TagAnalytics[] = Object.keys(tagCounts).map(tag => {
-    const vids = videoAnalytics.filter(v => v.video.originalTags && v.video.originalTags.includes(tag));
+    const vids = videoAnalytics.filter(v => {
+      if (v.video.tagIds && v.video.tagIds.length > 0) {
+        const names = v.video.tagIds.map(tId => tagIdToName.get(tId));
+        if (names.includes(tag)) return true;
+      }
+      const rawTags = v.video.originalTags ? v.video.originalTags.split(',').map(t => t.trim().toLowerCase()) : [];
+      return rawTags.includes(tag.toLowerCase());
+    });
     const count = vids.length;
     
     let sessionCount = 0;
@@ -242,7 +292,7 @@ export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAn
       sessionCount += v.timesWatched;
       strongCount += v.strongSessionAppearances;
       if (v.averageSessionRating) {
-        tTotalR += v.averageSessionRating * v.timesWatched; // weight by watch
+        tTotalR += v.averageSessionRating * v.timesWatched;
         tCountR += v.timesWatched;
       }
       if (v.lastWatched) {
@@ -265,7 +315,16 @@ export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAn
 
   // Performer Analytics
   const performers: PerformerAnalytics[] = Object.keys(performerCounts).map(perf => {
-    const vids = videoAnalytics.filter(v => v.video.performerDisplay && v.video.performerDisplay.includes(perf));
+    const vids = videoAnalytics.filter(v => {
+      if (v.video.performerIds && v.video.performerIds.length > 0) {
+        const names = v.video.performerIds.map(pId => perfIdToName.get(pId));
+        if (names.includes(perf)) return true;
+      }
+      const rawPerfs = v.video.performerDisplay 
+        ? v.video.performerDisplay.split(/[,&/]| and /i).map(p => p.trim().toLowerCase()) 
+        : [];
+      return rawPerfs.includes(perf.toLowerCase());
+    });
     const count = vids.length;
     
     let sessionCount = 0;
@@ -313,7 +372,6 @@ export function calculateAnalytics(videos: Video[], sessions: Session[]): FullAn
   const mismatches: MismatchSignal[] = [];
   const opportunities: OpportunitySignal[] = [];
 
-  // Mismatch evaluations for Tags
   tags.forEach(t => {
     if (t.collectionPercentage > 10 && t.sessionCount <= 1) {
       mismatches.push({

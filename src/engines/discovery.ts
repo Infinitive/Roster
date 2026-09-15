@@ -10,6 +10,26 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
+function videoHasTag(va: VideoAnalytics, tagQuery: string): boolean {
+  const queryLower = tagQuery.toLowerCase().trim();
+  if (va.video.originalTags) {
+    const parts = va.video.originalTags.split(',').map(t => t.trim().toLowerCase());
+    if (parts.includes(queryLower)) return true;
+  }
+  return false;
+}
+
+function videoHasPerformer(va: VideoAnalytics, perfQuery: string): boolean {
+  const queryLower = perfQuery.toLowerCase().trim();
+  if (va.video.performerDisplay) {
+    const parts = va.video.performerDisplay
+      .split(/[,&/]| and /i)
+      .map(p => p.trim().toLowerCase());
+    if (parts.includes(queryLower)) return true;
+  }
+  return false;
+}
+
 export function generateDiscovery(
   mode: DiscoveryMode,
   analytics: FullAnalytics,
@@ -49,7 +69,7 @@ export function generateDiscovery(
         else if (va.daysSinceLastWatched < 30) score -= 20;
         else score += 10;
       }
-      return { va, score: score + Math.random() * 20 }; // Add randomness
+      return { va, score: score + Math.random() * 20 };
     }).sort((a, b) => b.score - a.score);
     
     results = scored.map(s => toResult(s.va, s.score, 'Novelty', 'Selected to prioritize variety and reduce repetition.', [
@@ -58,7 +78,7 @@ export function generateDiscovery(
     ]));
   }
   else if (mode === 'Rediscover') {
-    // Strong past sessions, not used recently (> 60 days)
+    // Strong past sessions, not used recently (> 45 days)
     const eligible = videos.filter(v => v.timesWatched > 0 && v.daysSinceLastWatched !== null && v.daysSinceLastWatched > 45);
     const scored = eligible.map(va => {
       let score = va.daysSinceLastWatched || 0;
@@ -79,8 +99,8 @@ export function generateDiscovery(
       if (va.averageSessionRating) score += va.averageSessionRating * 15;
       if (va.video.personalRating) score += va.video.personalRating * 10;
       score += va.strongSessionAppearances * 20;
-      score += Math.min(va.timesWatched, 5) * 5; // Reward some repeat usage, cap at 5
-      return { va, score: score + (Math.random() * 10) }; // slight random variation
+      score += Math.min(va.timesWatched, 5) * 5;
+      return { va, score: score + (Math.random() * 10) };
     }).sort((a, b) => b.score - a.score);
 
     results = scored.map(s => toResult(s.va, s.score, 'High Signal', 'Strong observed behavioral evidence.', [
@@ -98,12 +118,11 @@ export function generateDiscovery(
 
       if (va.daysSinceLastWatched && va.daysSinceLastWatched > 90) score += 20;
       
-      // Calculate tag rarity
       if (va.video.originalTags) {
         const tags = va.video.originalTags.split(',').map(t => t.trim());
         let rarityBonus = 0;
         tags.forEach(t => {
-          const tStat = analytics.tags.find(ta => ta.tag === t);
+          const tStat = analytics.tags.find(ta => ta.tag.toLowerCase() === t.toLowerCase());
           if (tStat && tStat.collectionPercentage < 5) rarityBonus += 5;
         });
         score += rarityBonus;
@@ -135,8 +154,8 @@ export function generateDiscovery(
       let filtered = videos;
       if (type === 'Folder') filtered = videos.filter(v => v.video.folder === val);
       if (type === 'Participant Count') filtered = videos.filter(v => v.video.participantCount === val);
-      if (type === 'Tag') filtered = videos.filter(v => v.video.originalTags && v.video.originalTags.includes(val));
-      if (type === 'Performer') filtered = videos.filter(v => v.video.performerDisplay && v.video.performerDisplay.includes(val));
+      if (type === 'Tag') filtered = videos.filter(v => videoHasTag(v, val));
+      if (type === 'Performer') filtered = videos.filter(v => videoHasPerformer(v, val));
       if (type === 'Resolution') filtered = videos.filter(v => v.video.resolution === val);
       if (type === 'Vibe') filtered = videos.filter(v => v.video.vibe === val);
       if (type === 'Source') filtered = videos.filter(v => v.video.source === val);
@@ -155,9 +174,9 @@ export function generateDiscovery(
     opps.forEach(opp => {
       const vids = videos.filter(va => {
         if (matched.has(va.video.id)) return false;
-        if (opp.category === 'Tag') return va.video.originalTags?.includes(opp.label);
+        if (opp.category === 'Tag') return videoHasTag(va, opp.label);
         if (opp.category === 'Folder') return va.video.folder === opp.label;
-        if (opp.category === 'Performer') return va.video.performerDisplay?.includes(opp.label);
+        if (opp.category === 'Performer') return videoHasPerformer(va, opp.label);
         return false;
       });
       vids.forEach(va => {

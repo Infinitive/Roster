@@ -15,9 +15,13 @@ export default function Analytics() {
 
   async function loadAnalytics() {
     setLoading(true);
-    const videos = await Storage.getVideos();
-    const sessions = await Storage.getSessions();
-    const result = calculateAnalytics(videos, sessions);
+    const [videos, sessions, tags, performers] = await Promise.all([
+      Storage.getVideos(),
+      Storage.getSessions(),
+      Storage.getTags(),
+      Storage.getPerformers(),
+    ]);
+    const result = calculateAnalytics(videos, sessions, tags, performers);
     setData(result);
     setLoading(false);
   }

@@ -1,3 +1,20 @@
+export type ProvenanceLevel = 'raw' | 'parsed' | 'research-confirmed' | 'user-confirmed';
+
+export interface FieldProvenance {
+  level: ProvenanceLevel;
+  source?: string;
+  confidence?: 'high' | 'medium' | 'low';
+  confirmedAt?: number;
+  notes?: string;
+}
+
+export interface VideoProvenance {
+  performers?: FieldProvenance;
+  title?: FieldProvenance;
+  tags?: FieldProvenance;
+  resolution?: FieldProvenance;
+}
+
 export interface Video {
   id: string;
   filename: string;
@@ -20,6 +37,15 @@ export interface Video {
   notes: string;
   createdAt: number;
   updatedAt: number;
+
+  // Phase 6 Provenance, Research & Dataset metadata
+  provenance?: VideoProvenance;
+  researchTitle?: string;
+  alternateTitle?: string;
+  productionStudio?: string;
+  releaseYear?: number | null;
+  datasetType?: 'seed' | 'real' | 'user';
+  flags?: string[];
 }
 
 export interface Session {

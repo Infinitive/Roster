@@ -6,9 +6,9 @@ export interface CanonicalTagDefinition {
 
 export const CANONICAL_30_TAGS: CanonicalTagDefinition[] = [
   // Archetype & Identity (1-9)
-  { name: 'XL', category: 'Archetype & Identity', synonyms: ['xxl', 'monster', 'monster cock', 'monsterdick', 'huge cock', 'big cock', 'size'] },
+  { name: 'XL', category: 'Archetype & Identity', synonyms: ['xxl', 'monster', 'monster cock', 'monsterdick', 'huge cock', 'big cock'] },
   { name: 'Muscle', category: 'Archetype & Identity', synonyms: ['muscular', 'muscle hunk', 'hunk', 'bodybuilder'] },
-  { name: 'Twink', category: 'Archetype & Identity', synonyms: ['twinks', 'young'] },
+  { name: 'Twink', category: 'Archetype & Identity', synonyms: ['twinks'] },
   { name: 'Latino', category: 'Archetype & Identity', synonyms: ['latin', 'hispanic', 'spanish', 'brazilian'] },
   { name: 'DILF', category: 'Archetype & Identity', synonyms: ['dad', 'daddy', 'nastydaddy', 'stepdaddy'] },
   { name: 'Uncut', category: 'Archetype & Identity', synonyms: ['foreskin', 'intact'] },
@@ -19,7 +19,7 @@ export const CANONICAL_30_TAGS: CanonicalTagDefinition[] = [
   // Sexual Dynamic & Vibe (10-17)
   { name: 'Rough', category: 'Sexual Dynamic & Vibe', synonyms: ['hardcore', 'intense', 'hard & rough', 'bully'] },
   { name: 'Domination', category: 'Sexual Dynamic & Vibe', synonyms: ['dom', 'dominant', 'submissive', 'obey'] },
-  { name: 'Breeding', category: 'Sexual Dynamic & Vibe', synonyms: ['breed', 'raw', 'bareback'] },
+  { name: 'Breeding', category: 'Sexual Dynamic & Vibe', synonyms: ['breed', 'bareback'] },
   { name: 'Power', category: 'Sexual Dynamic & Vibe', synonyms: ['power dynamic', 'control'] },
   { name: 'Taboo', category: 'Sexual Dynamic & Vibe', synonyms: ['forbidden', 'stepbrother', 'brother-in-law', 'workplace'] },
   { name: 'Straight', category: 'Sexual Dynamic & Vibe', synonyms: ['str8', 'straight guy', 'curious', 'say uncle'] },
@@ -31,8 +31,8 @@ export const CANONICAL_30_TAGS: CanonicalTagDefinition[] = [
   { name: 'Deepthroat', category: 'Acts & Mechanics', synonyms: ['face fuck', 'throat', 'deep throat'] },
   { name: 'Blowjob', category: 'Acts & Mechanics', synonyms: ['bj', 'oral', 'sucking', 'suck'] },
   { name: 'Rimming', category: 'Acts & Mechanics', synonyms: ['rim', 'eating ass', 'ass licking'] },
-  { name: 'Cumshot', category: 'Acts & Mechanics', synonyms: ['cum', 'load', 'facial', 'internal'] },
-  { name: 'Edging', category: 'Acts & Mechanics', synonyms: ['edge', 'ruined orgasm', 'denial', 'stroke'] },
+  { name: 'Cumshot', category: 'Acts & Mechanics', synonyms: ['load', 'facial', 'internal'] },
+  { name: 'Edging', category: 'Acts & Mechanics', synonyms: ['edge', 'ruined orgasm', 'denial'] },
   { name: 'POV', category: 'Acts & Mechanics', synonyms: ['point of view'] },
 
   // Context & Setting (25-30)
@@ -43,6 +43,18 @@ export const CANONICAL_30_TAGS: CanonicalTagDefinition[] = [
   { name: 'Group', category: 'Context & Setting', synonyms: ['gangbang', 'orgy', 'threeway', 'tag-team', 'cumdump'] },
   { name: 'Party', category: 'Context & Setting', synonyms: ['sex party', 'chill'] }
 ];
+
+/**
+ * Generic / ambiguous single-word terms that must NOT be aggressively mapped to canonical tags.
+ * Preserved as raw/custom or marked uncertain.
+ */
+export const AMBIGUOUS_GENERIC_TERMS: Record<string, string> = {
+  size: 'Ambiguous: could refer to XL, body size, or format. Kept as raw term.',
+  young: 'Ambiguous: could refer to Twink, legal adult age, or general description. Kept as raw term.',
+  raw: 'Ambiguous: could refer to Breeding/bareback or unedited footage. Kept as raw term.',
+  cum: 'Ambiguous: could refer to Cumshot, verb, or generic fluid mention. Kept as raw term.',
+  stroke: 'Ambiguous: could refer to Edging or simple action. Kept as raw term.'
+};
 
 export const VALID_RESOLUTIONS = ['Unknown', '480p', '720p', '1080p', '1440p', '2160p'] as const;
 export type ResolutionType = typeof VALID_RESOLUTIONS[number];
@@ -70,20 +82,64 @@ export const KNOWN_PHYSICAL_FOLDERS = [
   '4(+) Group'
 ] as const;
 
+export type TagClassificationType = 'explicit' | 'strongly-inferred' | 'uncertain' | 'none';
+
+export interface TagClassification {
+  matchType: TagClassificationType;
+  canonicalTag?: CanonicalTagDefinition;
+  reason: string;
+}
+
 /**
- * Normalizes a tag string to a canonical tag if matched, preserving case sensitivity for canonical names.
+ * Conservative tag classifier adhering to Phase 6 Section 20 guidelines.
+ */
+export function classifyTagMatch(rawTag: string): TagClassification {
+  const cleaned = rawTag.trim().toLowerCase();
+  if (!cleaned) {
+    return { matchType: 'none', reason: 'Empty tag' };
+  }
+
+  // Check if it is a dangerous ambiguous generic term
+  if (AMBIGUOUS_GENERIC_TERMS[cleaned]) {
+    return {
+      matchType: 'uncertain',
+      reason: AMBIGUOUS_GENERIC_TERMS[cleaned]
+    };
+  }
+
+  // 1. Direct match (Explicit)
+  const direct = CANONICAL_30_TAGS.find(t => t.name.toLowerCase() === cleaned);
+  if (direct) {
+    return {
+      matchType: 'explicit',
+      canonicalTag: direct,
+      reason: `Exact match for canonical tag "${direct.name}"`
+    };
+  }
+
+  // 2. High-confidence synonym match (Strongly inferred)
+  const syn = CANONICAL_30_TAGS.find(t => t.synonyms?.some(s => s.toLowerCase() === cleaned));
+  if (syn) {
+    return {
+      matchType: 'strongly-inferred',
+      canonicalTag: syn,
+      reason: `Specific synonym match for canonical tag "${syn.name}"`
+    };
+  }
+
+  return {
+    matchType: 'none',
+    reason: 'Not a canonical tag (preserved as custom/raw)'
+  };
+}
+
+/**
+ * Normalizes a tag string to a canonical tag if conservatively matched.
  */
 export function matchCanonicalTag(rawTag: string): CanonicalTagDefinition | undefined {
-  const cleaned = rawTag.trim().toLowerCase();
-  if (!cleaned) return undefined;
-
-  // Direct match
-  const direct = CANONICAL_30_TAGS.find(t => t.name.toLowerCase() === cleaned);
-  if (direct) return direct;
-
-  // Synonym match
-  const syn = CANONICAL_30_TAGS.find(t => t.synonyms?.some(s => s.toLowerCase() === cleaned));
-  if (syn) return syn;
-
+  const classification = classifyTagMatch(rawTag);
+  if (classification.matchType === 'explicit' || classification.matchType === 'strongly-inferred') {
+    return classification.canonicalTag;
+  }
   return undefined;
 }

@@ -3,7 +3,17 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Storage } from '../storage/db';
 import { Video, Session, WatchlistItem } from '../types';
 import { calculateVideoHistory, WatchHistory } from '../engines/history';
-import { Bookmark, BookmarkMinus, Edit, PlaySquare, ArrowLeft } from 'lucide-react';
+import { 
+  Bookmark, 
+  BookmarkMinus, 
+  PlaySquare, 
+  ArrowLeft, 
+  ShieldCheck, 
+  AlertTriangle, 
+  HelpCircle,
+  CheckCircle2,
+  FileText
+} from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function VideoDetail() {
@@ -14,6 +24,7 @@ export default function VideoDetail() {
   const [watchlistStatus, setWatchlistStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [watchlistItemId, setWatchlistItemId] = useState<string | null>(null);
+  const [confirmStatus, setConfirmStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -65,12 +76,32 @@ export default function VideoDetail() {
     }
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
+  async function markAsUserConfirmed() {
+    if (!video) return;
+    const now = Date.now();
+    const updated: Video = {
+      ...video,
+      flags: (video.flags || []).filter(f => f !== 'research-needed'),
+      provenance: {
+        ...video.provenance,
+        performers: { level: 'user-confirmed', source: 'user', confirmedAt: now },
+        title: { level: 'user-confirmed', source: 'user', confirmedAt: now },
+        tags: { level: 'user-confirmed', source: 'user', confirmedAt: now },
+        resolution: { level: 'user-confirmed', source: 'user', confirmedAt: now }
+      },
+      updatedAt: now
+    };
+    await Storage.saveVideo(updated);
+    setVideo(updated);
+    setConfirmStatus('Metadata confirmed by user.');
+    setTimeout(() => setConfirmStatus(null), 3000);
+  }
 
   if (loading) return <div className="p-8 text-neutral-500">Loading...</div>;
   if (!video) return <div className="p-8 text-neutral-500">Video not found.</div>;
+
+  const perfProv = video.provenance?.performers?.level || 'parsed';
+  const titleProv = video.provenance?.title?.level || 'parsed';
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -80,8 +111,25 @@ export default function VideoDetail() {
 
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">{video.title || video.filename}</h2>
-          <div className="text-sm text-neutral-400 mt-1 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h2 className="text-2xl font-bold text-white">{video.title || video.filename}</h2>
+            {video.datasetType === 'real' && (
+              <span className="text-xs uppercase font-semibold tracking-wider px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 border border-blue-800/50">
+                Real Dataset
+              </span>
+            )}
+            {video.flags?.includes('research-needed') && (
+              <span className="text-xs uppercase font-semibold tracking-wider px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800/50 flex items-center gap-1">
+                <HelpCircle size={12} /> Research Needed
+              </span>
+            )}
+            {video.flags?.includes('participant-folder-mismatch') && (
+              <span className="text-xs uppercase font-semibold tracking-wider px-2 py-0.5 rounded bg-red-950/60 text-red-300 border border-red-800/50 flex items-center gap-1">
+                <AlertTriangle size={12} /> Mismatch
+              </span>
+            )}
+          </div>
+          <div className="text-sm text-neutral-400 flex flex-wrap items-center gap-x-4 gap-y-2">
             <span>{video.performerDisplay || 'No Performers'}</span>
             {video.personalRating && <span className="text-yellow-500 font-medium">★ {video.personalRating}</span>}
           </div>
@@ -102,8 +150,16 @@ export default function VideoDetail() {
         </div>
       </div>
 
+      {confirmStatus && (
+        <div className="p-3 bg-emerald-950/40 border border-emerald-900 text-emerald-300 text-xs rounded-lg flex items-center gap-2">
+          <CheckCircle2 size={14} />
+          <span>{confirmStatus}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
+          {/* Physical Metadata */}
           <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
             <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-800 pb-2">Physical Metadata</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -132,6 +188,7 @@ export default function VideoDetail() {
             </div>
           </div>
 
+          {/* Semantic Metadata */}
           <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
             <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-800 pb-2">Semantic Metadata</h3>
             <div className="space-y-4 text-sm">
@@ -139,7 +196,7 @@ export default function VideoDetail() {
                 <p className="text-neutral-500">Tags</p>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {video.originalTags ? video.originalTags.split(',').map((t, i) => (
-                    <span key={i} className="bg-neutral-800 px-2 py-1 rounded text-neutral-300">{t.trim()}</span>
+                    <span key={i} className="bg-neutral-800 px-2 py-1 rounded text-neutral-300 text-xs">{t.trim()}</span>
                   )) : <span className="text-neutral-600">None</span>}
                 </div>
               </div>
@@ -160,6 +217,66 @@ export default function VideoDetail() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Provenance & Confidence Model */}
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-2">
+              <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+                <ShieldCheck size={16} className="text-neutral-400" />
+                Provenance & Verification
+              </h3>
+              <button
+                type="button"
+                onClick={markAsUserConfirmed}
+                className="text-xs px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded font-medium transition-colors"
+              >
+                Mark as User Confirmed
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="bg-neutral-950 p-3 rounded-lg border border-neutral-800">
+                <span className="text-neutral-500 block">Performers</span>
+                <span className="font-semibold text-neutral-200 capitalize mt-1 block">{perfProv}</span>
+                <span className="text-[10px] text-neutral-500">src: {video.provenance?.performers?.source || 'filename'}</span>
+              </div>
+
+              <div className="bg-neutral-950 p-3 rounded-lg border border-neutral-800">
+                <span className="text-neutral-500 block">Title</span>
+                <span className="font-semibold text-neutral-200 capitalize mt-1 block">{titleProv}</span>
+                <span className="text-[10px] text-neutral-500">src: {video.provenance?.title?.source || 'filename'}</span>
+              </div>
+
+              <div className="bg-neutral-950 p-3 rounded-lg border border-neutral-800">
+                <span className="text-neutral-500 block">Tags</span>
+                <span className="font-semibold text-neutral-200 capitalize mt-1 block">
+                  {video.provenance?.tags?.level || 'parsed'}
+                </span>
+                <span className="text-[10px] text-neutral-500">{video.tagIds.length} resolved</span>
+              </div>
+
+              <div className="bg-neutral-950 p-3 rounded-lg border border-neutral-800">
+                <span className="text-neutral-500 block">Resolution</span>
+                <span className="font-semibold text-neutral-200 capitalize mt-1 block">
+                  {video.provenance?.resolution?.level || 'parsed'}
+                </span>
+                <span className="text-[10px] text-neutral-500">{video.resolution}</span>
+              </div>
+            </div>
+
+            {video.flags && video.flags.length > 0 && (
+              <div className="pt-2">
+                <p className="text-neutral-500 text-xs mb-1.5 font-medium">Uncertainty & Quality Flags:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {video.flags.map((flag, idx) => (
+                    <span key={idx} className="text-[11px] bg-neutral-950 border border-neutral-800 px-2 py-0.5 rounded text-amber-300">
+                      {flag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

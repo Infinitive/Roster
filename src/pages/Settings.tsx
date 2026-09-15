@@ -5,6 +5,7 @@ import { ImportExport, ImportValidationResult, ImportResult } from '../engines/i
 import { auditDataIntegrity, IntegrityReport, IntegrityFinding } from '../engines/integrity';
 import { initializeDatabase } from '../utils/initDb';
 import { CANONICAL_30_TAGS } from '../data/canonicalTags';
+import ReconciliationPanel from '../components/ReconciliationPanel';
 import { 
   Download, 
   Upload, 
@@ -348,7 +349,10 @@ export default function Settings() {
         )}
       </div>
 
-      {/* 2. BACKUP, RESTORE & DATA PORTABILITY SECTION */}
+      {/* 2. REAL COLLECTION INGESTION & RECONCILIATION */}
+      <ReconciliationPanel onCommitted={loadData} />
+
+      {/* 3. BACKUP, RESTORE & DATA PORTABILITY SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Export Card */}
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-col justify-between space-y-4">

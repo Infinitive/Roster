@@ -1,9 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Storage } from '../storage/db';
 import { calculateAnalytics } from '../engines/analytics';
 import { FullAnalytics } from '../types/analytics';
-import { Activity, Database, AlertTriangle, Lightbulb, PieChart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageHeader from '../components/ui/PageHeader';
+import TagChip from '../components/ui/TagChip';
+import { 
+  BarChart3, 
+  Activity, 
+  Database, 
+  AlertTriangle, 
+  Lightbulb, 
+  Star, 
+  Flame, 
+  FolderTree, 
+  Zap, 
+  CheckCircle2, 
+  ShieldAlert, 
+  Sparkles,
+  ArrowRight
+} from 'lucide-react';
 
 export default function Analytics() {
   const [data, setData] = useState<FullAnalytics | null>(null);
@@ -15,185 +31,336 @@ export default function Analytics() {
 
   async function loadAnalytics() {
     setLoading(true);
-    const [videos, sessions, tags, performers] = await Promise.all([
-      Storage.getVideos(),
-      Storage.getSessions(),
-      Storage.getTags(),
-      Storage.getPerformers(),
-    ]);
-    const result = calculateAnalytics(videos, sessions, tags, performers);
-    setData(result);
-    setLoading(false);
+    try {
+      const [videos, sessions, tags, performers] = await Promise.all([
+        Storage.getVideos(),
+        Storage.getSessions(),
+        Storage.getTags(),
+        Storage.getPerformers(),
+      ]);
+      const result = calculateAnalytics(videos, sessions, tags, performers);
+      setData(result);
+    } catch (err) {
+      console.error('Failed to calculate analytics:', err);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  if (loading) return <div className="p-8 text-neutral-500">Calculating intelligence...</div>;
-  if (!data) return <div className="p-8 text-neutral-500">Failed to calculate analytics.</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh] text-zinc-500 space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-amber-500/20 border-t-amber-500 animate-spin" />
+        <p className="text-xs uppercase tracking-widest font-mono">Computing Collection Intelligence...</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="p-8 text-center text-zinc-400">
+        Unable to calculate intelligence metrics. Ensure videos exist in database.
+      </div>
+    );
+  }
+
+  const provenVideos = data.videos.filter(
+    v => v.lifecycle === 'Proven' || v.lifecycle === 'Favorite / High Signal'
+  );
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      <div className="flex items-center gap-3 border-b border-neutral-800 pb-4">
-        <PieChart className="text-indigo-400" size={28} />
-        <h2 className="text-3xl font-bold">Analytics & Intelligence</h2>
+    <div className="space-y-8 max-w-6xl mx-auto pb-16">
+      <PageHeader
+        title="Collection Intelligence"
+        icon={<BarChart3 size={24} className="text-emerald-400" />}
+        subtitle="Behavioral reality, proven strengths, combination dynamics, and metadata hygiene."
+      />
+
+      {/* Primary KPI Intelligence Metric Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Collection Size */}
+        <div className="p-5 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-2">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] uppercase font-bold tracking-wider font-mono">Archive Volume</span>
+            <Database size={15} className="text-zinc-500" />
+          </div>
+          <p className="text-2xl sm:text-3xl font-extrabold text-white">{data.collection.totalVideos}</p>
+          <p className="text-xs text-zinc-400">
+            {data.collection.totalPerformers} Performers · {data.collection.totalTags} Tags
+          </p>
+        </div>
+
+        {/* Behavioral Activity */}
+        <div className="p-5 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-2">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] uppercase font-bold tracking-wider font-mono">Activity Sessions</span>
+            <Flame size={15} className="text-amber-500" />
+          </div>
+          <p className="text-2xl sm:text-3xl font-extrabold text-amber-400">{data.activity.totalSessions}</p>
+          <p className="text-xs text-zinc-400">
+            {data.activity.recent30DaysSessions} in last 30 days
+          </p>
+        </div>
+
+        {/* Collection Utilization */}
+        <div className="p-5 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-2">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] uppercase font-bold tracking-wider font-mono">Utilization Rate</span>
+            <Activity size={15} className="text-emerald-400" />
+          </div>
+          <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400">
+            {data.activity.collectionUtilization.toFixed(1)}%
+          </p>
+          <p className="text-xs text-zinc-400">
+            {data.activity.uniqueVideosUsed} unique videos used
+          </p>
+        </div>
+
+        {/* Metadata Health */}
+        <div className="p-5 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-2">
+          <div className="flex items-center justify-between text-zinc-400">
+            <span className="text-[10px] uppercase font-bold tracking-wider font-mono">Confidence Level</span>
+            <ShieldAlert size={15} className="text-blue-400" />
+          </div>
+          <p className="text-2xl sm:text-3xl font-extrabold text-zinc-100">
+            {(100 - data.health.percentageAffected).toFixed(0)}%
+          </p>
+          <p className="text-xs text-zinc-400">
+            {data.health.cleanCount} fully resolved clean records
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-xl">
-          <div className="flex items-center gap-2 text-neutral-400 mb-2">
-            <Database size={16} /> <span className="text-sm font-medium uppercase tracking-wide">Collection</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{data.collection.totalVideos}</p>
-          <p className="text-sm text-neutral-500 mt-1">{data.collection.totalPerformers} Performers · {data.collection.totalTags} Tags</p>
-        </div>
-        
-        <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-xl">
-          <div className="flex items-center gap-2 text-neutral-400 mb-2">
-            <Activity size={16} /> <span className="text-sm font-medium uppercase tracking-wide">Sessions</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{data.activity.totalSessions}</p>
-          <p className="text-sm text-neutral-500 mt-1">{data.activity.recent30DaysSessions} in last 30 days</p>
-        </div>
+      {/* Main Analysis Sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column: Physical Composition & Tag Signals */}
+        <div className="space-y-6">
+          {/* Folder Breakdown */}
+          <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <FolderTree size={17} className="text-amber-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+                  Physical Folder Hierarchy
+                </h3>
+              </div>
+              <span className="text-xs text-zinc-500 font-mono">Distribution</span>
+            </div>
 
-        <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-xl">
-          <div className="flex items-center gap-2 text-neutral-400 mb-2">
-            <Activity size={16} /> <span className="text-sm font-medium uppercase tracking-wide">Utilization</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{data.activity.collectionUtilization.toFixed(1)}%</p>
-          <p className="text-sm text-neutral-500 mt-1">{data.activity.uniqueVideosUsed} unique videos used</p>
-        </div>
-
-        <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-xl group relative">
-          <div className="flex items-center gap-2 text-neutral-400 mb-2">
-            <AlertTriangle size={16} /> <span className="text-sm font-medium uppercase tracking-wide">Health</span>
-          </div>
-          <p className="text-3xl font-bold text-white">{data.health.percentageAffected.toFixed(1)}%</p>
-          <p className="text-sm text-neutral-500 mt-1">Records missing metadata</p>
-          
-          <div className="absolute top-full left-0 mt-2 w-64 bg-neutral-800 border border-neutral-700 rounded-lg p-3 hidden group-hover:block z-10 shadow-xl">
-            <h4 className="text-xs font-bold text-neutral-300 uppercase mb-2">Missing Fields</h4>
-            <ul className="text-xs text-neutral-400 space-y-1">
-              <li className="flex justify-between"><span>Performer:</span> <span>{data.health.missingPerformer}</span></li>
-              <li className="flex justify-between"><span>Title:</span> <span>{data.health.missingTitle}</span></li>
-              <li className="flex justify-between"><span>Tags:</span> <span>{data.health.missingTags}</span></li>
-              <li className="flex justify-between"><span>Resolution:</span> <span>{data.health.unknownResolution}</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="space-y-4">
-          <h3 className="text-xl font-bold flex items-center gap-2"><Database size={20} /> Collection Composition</h3>
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-6">
-            <div>
-              <h4 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">By Folder</h4>
-              <div className="space-y-2">
-                {data.folders.map(f => (
-                  <div key={f.folder} className="flex items-center justify-between text-sm">
-                    <span className="text-neutral-300">{f.folder}</span>
-                    <div className="flex items-center gap-3">
-                      <div className="w-32 h-2 bg-neutral-950 rounded-full overflow-hidden">
-                        <div className="h-full bg-indigo-500" style={{ width: `${f.collectionPercentage}%` }}></div>
-                      </div>
-                      <span className="text-neutral-500 w-12 text-right">{f.collectionPercentage.toFixed(1)}%</span>
-                    </div>
+            <div className="space-y-3">
+              {data.folders.map(f => (
+                <div key={f.folder} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-zinc-300">{f.folder}</span>
+                    <span className="font-mono text-zinc-500">
+                      {f.count} videos ({f.collectionPercentage.toFixed(1)}%)
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">Top Tags (by representation)</h4>
-              <div className="flex flex-wrap gap-2">
-                {data.tags.slice(0, 15).map(t => (
-                  <span key={t.tag} className="bg-neutral-950 border border-neutral-800 text-neutral-300 px-2 py-1 rounded text-xs flex items-center gap-2">
-                    {t.tag} <span className="text-neutral-600">{t.videoCount}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-4">
-          <h3 className="text-xl font-bold flex items-center gap-2"><Lightbulb size={20} /> Intelligence & Signals</h3>
-          
-          <div className="space-y-4">
-            {data.opportunities.length > 0 ? (
-              <div className="bg-emerald-950/20 border border-emerald-900/30 rounded-xl p-5">
-                <h4 className="text-sm font-medium text-emerald-500 mb-3 uppercase tracking-wide flex items-center gap-2">
-                  Opportunities
-                </h4>
-                <div className="space-y-3">
-                  {data.opportunities.slice(0, 5).map((opp, idx) => (
-                    <div key={idx} className="bg-neutral-950/50 p-3 rounded-lg border border-neutral-800/50">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-neutral-200 font-medium">{opp.label}</span>
-                        <span className="text-[10px] uppercase bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded">{opp.category}</span>
-                      </div>
-                      <p className="text-xs text-neutral-400">{opp.evidence}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 text-sm text-neutral-500 text-center">
-                Insufficient data to generate opportunities. Log more sessions with ratings.
-              </div>
-            )}
-
-            {data.combinations.length > 0 && (
-              <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5">
-                <h4 className="text-sm font-medium text-neutral-400 mb-3 uppercase tracking-wide">Recurring Combinations</h4>
-                <div className="space-y-3">
-                  {data.combinations.slice(0, 5).map((combo, idx) => (
-                    <div key={idx} className="text-sm">
-                      <div className="text-neutral-300 font-medium mb-1">
-                        {combo.videoIds.length} videos combined {combo.occurrences} times
-                      </div>
-                      {combo.strongOccurrences > 0 && (
-                        <span className="text-xs text-indigo-400">{combo.strongOccurrences} strong sessions</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-      
-      <section className="space-y-4">
-        <h3 className="text-xl font-bold flex items-center gap-2"><Activity size={20} /> Proven Videos</h3>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
-          {data.videos.filter(v => v.lifecycle === 'Proven' || v.lifecycle === 'Favorite / High Signal').length === 0 ? (
-            <div className="p-8 text-center text-neutral-500 text-sm">No proven videos yet. Use them more often.</div>
-          ) : (
-            <div className="divide-y divide-neutral-800/50">
-              {data.videos
-                .filter(v => v.lifecycle === 'Proven' || v.lifecycle === 'Favorite / High Signal')
-                .sort((a, b) => b.timesWatched - a.timesWatched)
-                .slice(0, 10)
-                .map(v => (
-                <div key={v.video.id} className="p-4 flex items-center justify-between hover:bg-neutral-800/30 transition-colors">
-                  <div className="flex-1 min-w-0 pr-4">
-                    <Link to={`/video/${v.video.id}`} className="font-medium text-neutral-200 hover:text-white truncate block">
-                      {v.video.title || v.video.filename}
-                    </Link>
-                    <div className="text-xs text-neutral-500 flex gap-3 mt-1">
-                      <span className={`${v.lifecycle === 'Favorite / High Signal' ? 'text-yellow-500' : 'text-indigo-400'}`}>
-                        {v.lifecycle}
-                      </span>
-                      <span>Watched {v.timesWatched}x</span>
-                      {v.averageSessionRating && <span>Avg ★ {v.averageSessionRating.toFixed(1)}</span>}
-                    </div>
+                  <div className="h-2 rounded-full bg-zinc-900 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-600 to-amber-500 rounded-full"
+                      style={{ width: `${f.collectionPercentage}%` }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
-          )}
+          </section>
+
+          {/* Top Canonical Tags */}
+          <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Sparkles size={17} className="text-indigo-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+                  Tag Representation
+                </h3>
+              </div>
+              <span className="text-xs text-zinc-500 font-mono">Top Signals</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {data.tags.slice(0, 24).map(t => (
+                <div
+                  key={t.tag}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/90 border border-zinc-800 text-xs"
+                >
+                  <TagChip tag={t.tag} size="xs" />
+                  <span className="text-zinc-500 font-mono text-[11px]">{t.videoCount}</span>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
+
+        {/* Right Column: Opportunities & Strong Combinations */}
+        <div className="space-y-6">
+          {/* Opportunities & Gaps */}
+          <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Lightbulb size={17} className="text-emerald-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+                  Emerging Opportunities & Gaps
+                </h3>
+              </div>
+              <span className="text-xs text-zinc-500 font-mono">{data.opportunities.length} Signals</span>
+            </div>
+
+            {data.opportunities.length === 0 ? (
+              <div className="p-6 text-center text-xs text-zinc-500 bg-zinc-950/40 rounded-xl border border-zinc-800">
+                Insufficient rating and session history to detect opportunities. Log sessions with ratings (★ 1-5) to unlock intelligence.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.opportunities.slice(0, 5).map((opp, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-zinc-200">{opp.label}</span>
+                      <span className="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded">
+                        {opp.category}
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-400 leading-relaxed">{opp.evidence}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Recurring Combinations */}
+          <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Zap size={17} className="text-indigo-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+                  Recurring Video Combinations
+                </h3>
+              </div>
+              <span className="text-xs text-zinc-500 font-mono">Multi-Video Synergy</span>
+            </div>
+
+            {data.combinations.length === 0 ? (
+              <div className="p-6 text-center text-xs text-zinc-500 bg-zinc-950/40 rounded-xl border border-zinc-800">
+                No recurring multi-video combinations detected yet. Add multiple videos to sessions to track synergies.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.combinations.slice(0, 5).map((combo, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between gap-3"
+                  >
+                    <div>
+                      <span className="text-xs font-semibold text-zinc-200 block">
+                        {combo.videoIds.length} videos combined {combo.occurrences} times
+                      </span>
+                      {combo.strongOccurrences > 0 && (
+                        <span className="text-[11px] text-indigo-400 font-mono">
+                          ★ {combo.strongOccurrences} strong sessions
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/80 text-indigo-300 font-bold border border-indigo-900/60 font-mono">
+                      Synergy
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+
+      {/* Proven High Signal Media */}
+      <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <Star size={17} className="text-amber-400 fill-amber-400/30" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+              Proven High-Signal Videos ({provenVideos.length})
+            </h3>
+          </div>
+          <Link to="/collection" className="text-xs text-amber-400 hover:underline flex items-center gap-1">
+            Browse full library <ArrowRight size={13} />
+          </Link>
+        </div>
+
+        {provenVideos.length === 0 ? (
+          <div className="p-8 text-center text-xs text-zinc-500 bg-zinc-950/40 rounded-xl border border-zinc-800">
+            No proven videos yet. As you repeat and rate videos across sessions, they will graduate to Proven status here.
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-800/60 rounded-xl overflow-hidden border border-zinc-800">
+            {provenVideos.slice(0, 8).map(v => (
+              <div
+                key={v.video.id}
+                className="p-3.5 bg-zinc-900/40 hover:bg-zinc-800/40 transition-colors flex items-center justify-between gap-4"
+              >
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to={`/video/${v.video.id}`}
+                    className="text-xs sm:text-sm font-semibold text-zinc-200 hover:text-white truncate block"
+                  >
+                    {v.video.performerDisplay ? `${v.video.performerDisplay} — ` : ''}
+                    {v.video.title || v.video.filename}
+                  </Link>
+                  <div className="flex items-center gap-3 text-[11px] text-zinc-500 mt-0.5 font-mono">
+                    <span className="text-amber-400 font-semibold">{v.lifecycle}</span>
+                    <span>Watched {v.timesWatched}x</span>
+                    {v.averageSessionRating && <span>Avg ★ {v.averageSessionRating.toFixed(1)}</span>}
+                  </div>
+                </div>
+
+                <Link
+                  to={`/video/${v.video.id}`}
+                  className="text-xs px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors"
+                >
+                  View
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
+      {/* Metadata Hygiene & Quality Health */}
+      <section className="p-6 rounded-2xl bg-[#121520] border border-zinc-800/80 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <ShieldAlert size={17} className="text-amber-400" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 font-mono">
+              Metadata Hygiene & Incompleteness
+            </h3>
+          </div>
+          <span className="text-xs text-zinc-500 font-mono">
+            {data.health.recordsWithIssues} Records Flagged
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
+            <span className="text-zinc-500 block text-[11px]">Missing Performer</span>
+            <p className="text-lg font-bold text-zinc-200 mt-1">{data.health.missingPerformer}</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
+            <span className="text-zinc-500 block text-[11px]">Missing Title</span>
+            <p className="text-lg font-bold text-zinc-200 mt-1">{data.health.missingTitle}</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
+            <span className="text-zinc-500 block text-[11px]">Missing Tags</span>
+            <p className="text-lg font-bold text-zinc-200 mt-1">{data.health.missingTags}</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
+            <span className="text-zinc-500 block text-[11px]">Unknown Resolution</span>
+            <p className="text-lg font-bold text-zinc-200 mt-1">{data.health.unknownResolution}</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

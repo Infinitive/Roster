@@ -15,6 +15,7 @@ import VideoDetail from './pages/VideoDetail';
 import SessionDetail from './pages/SessionDetail';
 import Analytics from './pages/Analytics';
 import Discovery from './pages/Discovery';
+import Insight from './pages/Insight';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Overview />} />
+          <Route path="insight" element={<Insight />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="discovery" element={<Discovery />} />
           <Route path="collection" element={<Collection />} />

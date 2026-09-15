@@ -10,11 +10,13 @@ import {
   Bookmark, 
   HardDrive,
   CheckCircle2,
+  BookOpen,
   Menu,
   X
 } from 'lucide-react';
 import { initializeDatabase } from '../utils/initDb';
 import { Storage } from '../storage/db';
+import T9Mark from '../components/ui/T9Mark';
 
 export default function MainLayout() {
   const location = useLocation();
@@ -48,7 +50,7 @@ export default function MainLayout() {
     { to: '/collection', label: 'Library', icon: Film, end: false },
     { to: '/sessions', label: 'Play', icon: Flame, end: false },
     { to: '/insight', label: 'Insight', icon: Sparkles, end: false, altPaths: ['/discovery', '/analytics'] },
-    { to: '/settings', label: 'More', icon: SlidersHorizontal, end: false },
+    { to: '/more', label: 'More', icon: SlidersHorizontal, end: false },
   ];
 
   // Helper to determine if Insight is active when on /discovery or /analytics
@@ -58,24 +60,25 @@ export default function MainLayout() {
              location.pathname.startsWith('/discovery') || 
              location.pathname.startsWith('/analytics');
     }
+    if (item.to === '/more') {
+      return location.pathname.startsWith('/more') || location.pathname.startsWith('/settings');
+    }
     return false;
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#0b0d14] text-zinc-100 font-sans selection:bg-amber-500/20 selection:text-amber-200">
+    <div className="flex flex-col h-screen bg-[#0c0e14] text-zinc-100 font-sans selection:bg-amber-500/20 selection:text-amber-200">
       {/* Top Header */}
-      <header className="flex-none px-4 sm:px-6 py-3.5 bg-[#0f121b]/95 backdrop-blur border-b border-zinc-800/80 flex items-center justify-between z-20">
+      <header className="flex-none px-4 sm:px-6 py-3 bg-[#10131d]/95 backdrop-blur border-b border-zinc-800/80 flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 flex items-center justify-center text-zinc-950 font-black text-sm tracking-wider shadow-md shadow-amber-950/40 group-hover:scale-105 transition-transform">
-              T9
-            </div>
+            <T9Mark size={28} variant="signature" className="group-hover:scale-105 transition-transform" />
             <div>
-              <span className="font-bold tracking-tight text-zinc-100 text-base sm:text-lg block leading-none">
-                T9 Registry
+              <span className="font-extrabold tracking-tight text-zinc-100 text-base sm:text-lg block leading-none">
+                T9 <span className="font-medium text-zinc-400">Registry</span>
               </span>
               <span className="text-[10px] tracking-widest text-zinc-400 uppercase font-mono block mt-0.5">
-                Collection Intelligence
+                Personal Archive
               </span>
             </div>
           </Link>
@@ -157,6 +160,19 @@ export default function MainLayout() {
                 Curated
               </span>
               <ul className="space-y-1">
+                <li>
+                  <NavLink
+                    to="/guide"
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                        isActive ? 'bg-amber-500/15 text-amber-300 font-semibold' : 'text-zinc-400 hover:bg-zinc-900/60 hover:text-zinc-200'
+                      }`
+                    }
+                  >
+                    <BookOpen size={15} className="text-amber-400" />
+                    <span>Field Guide</span>
+                  </NavLink>
+                </li>
                 <li>
                   <NavLink
                     to="/sessions/new"

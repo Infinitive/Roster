@@ -5,6 +5,7 @@ import { Video, Session, WatchlistItem } from '../types';
 import { calculateVideoHistory, WatchHistory } from '../engines/history';
 import TagChip from '../components/ui/TagChip';
 import Badge from '../components/ui/Badge';
+import PlayButton from '../components/ui/PlayButton';
 import { 
   Bookmark, 
   BookmarkCheck, 
@@ -171,6 +172,8 @@ export default function VideoDetail() {
         </button>
 
         <div className="flex items-center gap-2">
+          <PlayButton video={video} size="sm" variant="primary" label="Play Video" />
+
           <button 
             type="button"
             onClick={toggleWatchlist}
@@ -186,9 +189,9 @@ export default function VideoDetail() {
 
           <Link
             to={`/sessions/new?videoId=${video.id}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md shadow-amber-950/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition-all active:scale-95"
           >
-            <Flame size={15} />
+            <Flame size={15} className="text-amber-400" />
             <span>Log Session</span>
           </Link>
         </div>

@@ -4,6 +4,7 @@ import { WatchlistItem, Video } from '../types';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/ui/PageHeader';
 import EmptyState from '../components/ui/EmptyState';
+import PlayButton from '../components/ui/PlayButton';
 import { 
   Bookmark, 
   Flame, 
@@ -177,11 +178,15 @@ export default function Watchlist() {
                   ))}
                 </select>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
+                  {item.video && (
+                    <PlayButton video={item.video} size="xs" variant="primary" />
+                  )}
+
                   <Link
                     to={`/sessions/new?videoId=${item.videoId}`}
                     title="Log Session"
-                    className="p-1.5 rounded-lg text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 transition-colors"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 transition-colors"
                   >
                     <Flame size={14} />
                   </Link>

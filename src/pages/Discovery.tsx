@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../components/ui/PageHeader';
 import TagChip from '../components/ui/TagChip';
 import Badge from '../components/ui/Badge';
+import PlayButton from '../components/ui/PlayButton';
 import { 
   Sparkles, 
   Dices, 
@@ -342,6 +343,8 @@ export default function Discovery() {
 
               {/* Action Toolbar */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
+                <PlayButton video={currentResult.video} size="sm" variant="primary" label="Play Video" />
+
                 <button
                   type="button"
                   onClick={() => handleAddToWatchlist(currentResult.videoId)}
@@ -357,9 +360,9 @@ export default function Discovery() {
 
                 <Link
                   to={`/sessions/new?videoId=${currentResult.videoId}`}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-colors"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs transition-colors border border-zinc-700"
                 >
-                  <Flame size={16} />
+                  <Flame size={16} className="text-rose-400" />
                   <span>Log Session</span>
                 </Link>
 

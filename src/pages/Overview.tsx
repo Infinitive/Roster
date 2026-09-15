@@ -9,6 +9,7 @@ import { DiscoveryResult } from '../types/discovery';
 import MediaCard from '../components/ui/MediaCard';
 import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
+import PlayButton from '../components/ui/PlayButton';
 import { 
   Flame, 
   Sparkles, 
@@ -139,13 +140,13 @@ export default function Overview() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      {/* Editorial Command Center Hero */}
+      {/* Editorial Archive Header */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#161a28] via-[#111420] to-[#0d0f17] border border-zinc-800/80 p-6 sm:p-8 shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-950/60 text-amber-300 border border-amber-800/60 font-mono">
-                Command Center
+                Archive Overview
               </span>
               {realVideos.length > 0 ? (
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-950/60 text-blue-300 border border-blue-800/60 font-mono">
@@ -162,7 +163,7 @@ export default function Overview() {
               T9 Collection Registry
             </h1>
             <p className="text-xs sm:text-sm text-zinc-400 font-normal leading-relaxed">
-              Private metadata, behavioral memory, and discovery layer. Physical files remain safe on your T9 drive.
+              Private metadata, behavioral memory, and external playback. Physical files remain safe on your T9 drive.
             </p>
           </div>
 
@@ -233,7 +234,7 @@ export default function Overview() {
             <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-indigo-400" />
               <h2 className="text-lg font-bold tracking-tight text-zinc-200">Discovery Spotlight</h2>
-              <span className="text-[11px] text-zinc-400">· Algorithmic surprise</span>
+              <span className="text-[11px] text-zinc-400">· Curated recommendation</span>
             </div>
             <button
               type="button"
@@ -278,26 +279,28 @@ export default function Overview() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2.5 flex-none">
+            <div className="flex items-center gap-2 flex-none">
+              <PlayButton video={spotlight.video} size="sm" variant="primary" />
+
               <button
                 type="button"
                 onClick={() => handleToggleWatchlist(spotlight.videoId)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors ${
                   watchlist.some(w => w.videoId === spotlight.videoId)
                     ? 'bg-amber-950/50 text-amber-300 border border-amber-800'
                     : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
                 }`}
               >
                 <Bookmark size={14} />
-                <span>{watchlist.some(w => w.videoId === spotlight.videoId) ? 'In Queue' : 'Save to Queue'}</span>
+                <span className="hidden sm:inline">{watchlist.some(w => w.videoId === spotlight.videoId) ? 'In Queue' : 'Queue'}</span>
               </button>
 
               <Link
                 to={`/sessions/new?videoId=${spotlight.videoId}`}
-                className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs flex items-center gap-1.5 transition-colors border border-zinc-700"
               >
-                <Flame size={14} />
-                <span>Use in Session</span>
+                <Flame size={14} className="text-rose-400" />
+                <span className="hidden sm:inline">Session</span>
               </Link>
             </div>
           </div>
@@ -477,13 +480,16 @@ export default function Overview() {
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-none">
+                      {item.video && (
+                        <PlayButton video={item.video} size="xs" variant="primary" />
+                      )}
                       <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded">
                         {item.status}
                       </span>
                       <Link
                         to={`/sessions/new?videoId=${item.videoId}`}
                         title="Start Session"
-                        className="p-1 rounded-lg text-zinc-400 hover:text-amber-400 transition-colors"
+                        className="p-1 rounded-lg text-zinc-400 hover:text-rose-400 transition-colors"
                       >
                         <Flame size={14} />
                       </Link>

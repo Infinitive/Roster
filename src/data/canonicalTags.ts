@@ -1,47 +1,48 @@
 export interface CanonicalTagDefinition {
   name: string;
   category: 'Archetype & Identity' | 'Sexual Dynamic & Vibe' | 'Acts & Mechanics' | 'Context & Setting';
+  description?: string;
   synonyms?: string[];
 }
 
 export const CANONICAL_30_TAGS: CanonicalTagDefinition[] = [
   // Archetype & Identity (1-9)
-  { name: 'XL', category: 'Archetype & Identity', synonyms: ['xxl', 'monster', 'monster cock', 'monsterdick', 'huge cock', 'big cock'] },
-  { name: 'Muscle', category: 'Archetype & Identity', synonyms: ['muscular', 'muscle hunk', 'hunk', 'bodybuilder'] },
-  { name: 'Twink', category: 'Archetype & Identity', synonyms: ['twinks'] },
-  { name: 'Latino', category: 'Archetype & Identity', synonyms: ['latin', 'hispanic', 'spanish', 'brazilian'] },
-  { name: 'DILF', category: 'Archetype & Identity', synonyms: ['dad', 'daddy', 'nastydaddy', 'stepdaddy'] },
-  { name: 'Uncut', category: 'Archetype & Identity', synonyms: ['foreskin', 'intact'] },
-  { name: 'Jock', category: 'Archetype & Identity', synonyms: ['jocks', 'athlete', 'athletic', 'bro'] },
-  { name: 'Chav', category: 'Archetype & Identity', synonyms: ['lad', 'scally'] },
-  { name: 'Interracial', category: 'Archetype & Identity', synonyms: ['bwc', 'bbc'] },
+  { name: 'XL', category: 'Archetype & Identity', description: 'Prominent anatomical size, heavy endowment, or monster scale.', synonyms: ['xxl', 'monster', 'monster cock', 'monsterdick', 'huge cock', 'big cock'] },
+  { name: 'Muscle', category: 'Archetype & Identity', description: 'Bodybuilders, defined muscular physiques, athletic mass, and strength.', synonyms: ['muscular', 'muscle hunk', 'hunk', 'bodybuilder'] },
+  { name: 'Twink', category: 'Archetype & Identity', description: 'Slender, youthful, smooth, lean or boyish aesthetic.', synonyms: ['twinks'] },
+  { name: 'Latino', category: 'Archetype & Identity', description: 'Performers of Hispanic, Latin American, Brazilian, or Iberian heritage.', synonyms: ['latin', 'hispanic', 'spanish', 'brazilian'] },
+  { name: 'DILF', category: 'Archetype & Identity', description: 'Mature masculine performers, silver-fox, paternal authority figures.', synonyms: ['dad', 'daddy', 'nastydaddy', 'stepdaddy'] },
+  { name: 'Uncut', category: 'Archetype & Identity', description: 'Intact foreskin anatomical feature highlighted in performance.', synonyms: ['foreskin', 'intact'] },
+  { name: 'Jock', category: 'Archetype & Identity', description: 'Athletic, collegiate, team sport aesthetic, baseball caps, gym bro vibe.', synonyms: ['jocks', 'athlete', 'athletic', 'bro'] },
+  { name: 'Chav', category: 'Archetype & Identity', description: 'UK/European street subculture, tracksuits, caps, rough street lad demeanor.', synonyms: ['lad', 'scally'] },
+  { name: 'Interracial', category: 'Archetype & Identity', description: 'Cross-racial pairings, contrasting skin tones, multicultural scenes.', synonyms: ['bwc', 'bbc'] },
 
   // Sexual Dynamic & Vibe (10-17)
-  { name: 'Rough', category: 'Sexual Dynamic & Vibe', synonyms: ['hardcore', 'intense', 'hard & rough', 'bully'] },
-  { name: 'Domination', category: 'Sexual Dynamic & Vibe', synonyms: ['dom', 'dominant', 'submissive', 'obey'] },
-  { name: 'Breeding', category: 'Sexual Dynamic & Vibe', synonyms: ['breed', 'bareback'] },
-  { name: 'Power', category: 'Sexual Dynamic & Vibe', synonyms: ['power dynamic', 'control'] },
-  { name: 'Taboo', category: 'Sexual Dynamic & Vibe', synonyms: ['forbidden', 'stepbrother', 'brother-in-law', 'workplace'] },
-  { name: 'Straight', category: 'Sexual Dynamic & Vibe', synonyms: ['str8', 'straight guy', 'curious', 'say uncle'] },
-  { name: 'Worship', category: 'Sexual Dynamic & Vibe', synonyms: ['body worship', 'cock worship'] },
-  { name: 'Kinky', category: 'Sexual Dynamic & Vibe', synonyms: ['kink', 'fetish', 'bondage'] },
+  { name: 'Rough', category: 'Sexual Dynamic & Vibe', description: 'High physical intensity, slap, force, aggressive pace, heavy friction.', synonyms: ['hardcore', 'intense', 'hard & rough', 'bully'] },
+  { name: 'Domination', category: 'Sexual Dynamic & Vibe', description: 'Explicit master/sub dynamic, obedience, submission, commanding control.', synonyms: ['dom', 'dominant', 'submissive', 'obey'] },
+  { name: 'Breeding', category: 'Sexual Dynamic & Vibe', description: 'Primal, bareback, internal finish obsession, animalistic drive.', synonyms: ['breed', 'bareback'] },
+  { name: 'Power', category: 'Sexual Dynamic & Vibe', description: 'Clear hierarchical contrast, psychological dominance, confidence.', synonyms: ['power dynamic', 'control'] },
+  { name: 'Taboo', category: 'Sexual Dynamic & Vibe', description: 'Forbidden psychological themes, illicit settings, transgressive roles.', synonyms: ['forbidden', 'stepbrother', 'brother-in-law', 'workplace'] },
+  { name: 'Straight', category: 'Sexual Dynamic & Vibe', description: 'Curious, seduced, first-time, reluctant, or identified straight male scenes.', synonyms: ['str8', 'straight guy', 'curious', 'say uncle'] },
+  { name: 'Worship', category: 'Sexual Dynamic & Vibe', description: 'Physical adoration, kissing, devotion, body and cock reverence.', synonyms: ['body worship', 'cock worship'] },
+  { name: 'Kinky', category: 'Sexual Dynamic & Vibe', description: 'Fetish gear, leather, rubber, restraints, breath play, sensory focus.', synonyms: ['kink', 'fetish', 'bondage'] },
 
   // Acts & Mechanics (18-24)
-  { name: 'DP', category: 'Acts & Mechanics', synonyms: ['double penetration', 'dp scene'] },
-  { name: 'Deepthroat', category: 'Acts & Mechanics', synonyms: ['face fuck', 'throat', 'deep throat'] },
-  { name: 'Blowjob', category: 'Acts & Mechanics', synonyms: ['bj', 'oral', 'sucking', 'suck'] },
-  { name: 'Rimming', category: 'Acts & Mechanics', synonyms: ['rim', 'eating ass', 'ass licking'] },
-  { name: 'Cumshot', category: 'Acts & Mechanics', synonyms: ['load', 'facial', 'internal'] },
-  { name: 'Edging', category: 'Acts & Mechanics', synonyms: ['edge', 'ruined orgasm', 'denial'] },
-  { name: 'POV', category: 'Acts & Mechanics', synonyms: ['point of view'] },
+  { name: 'DP', category: 'Acts & Mechanics', description: 'Double penetration, shared penetration by multiple performers.', synonyms: ['double penetration', 'dp scene'] },
+  { name: 'Deepthroat', category: 'Acts & Mechanics', description: 'Oral penetration past the throat barrier, gagging, throat hold.', synonyms: ['face fuck', 'throat', 'deep throat'] },
+  { name: 'Blowjob', category: 'Acts & Mechanics', description: 'Focused fellatio, oral sex as central act or extended sequence.', synonyms: ['bj', 'oral', 'sucking', 'suck'] },
+  { name: 'Rimming', category: 'Acts & Mechanics', description: 'Analingus, oral-anal stimulation as prelude or featured act.', synonyms: ['rim', 'eating ass', 'ass licking'] },
+  { name: 'Cumshot', category: 'Acts & Mechanics', description: 'Prominent ejaculation scene, facial, chest, internal or heavy volume.', synonyms: ['load', 'facial', 'internal'] },
+  { name: 'Edging', category: 'Acts & Mechanics', description: 'Prolonged arousal maintenance near climax, delay, orgasm control.', synonyms: ['edge', 'ruined orgasm', 'denial'] },
+  { name: 'POV', category: 'Acts & Mechanics', description: 'First-person camera angle simulating viewer direct involvement.', synonyms: ['point of view'] },
 
   // Context & Setting (25-30)
-  { name: 'Public', category: 'Context & Setting', synonyms: ['outdoor', 'outdoors', 'exhibition', 'cruising'] },
-  { name: 'Uniform', category: 'Context & Setting', synonyms: ['cops', 'military', 'gear'] },
-  { name: 'Amateur', category: 'Context & Setting', synonyms: ['homemade', 'real', 'bedroom'] },
-  { name: 'Undercover', category: 'Context & Setting', synonyms: ['hidden camera', 'spy', 'voyeur'] },
-  { name: 'Group', category: 'Context & Setting', synonyms: ['gangbang', 'orgy', 'threeway', 'tag-team', 'cumdump'] },
-  { name: 'Party', category: 'Context & Setting', synonyms: ['sex party', 'chill'] }
+  { name: 'Public', category: 'Context & Setting', description: 'Outdoor, semi-public, risk of discovery, balconies, cars, cruising.', synonyms: ['outdoor', 'outdoors', 'exhibition', 'cruising'] },
+  { name: 'Uniform', category: 'Context & Setting', description: 'Police, military, medical, work uniforms, sports kits, tactical gear.', synonyms: ['cops', 'military', 'gear'] },
+  { name: 'Amateur', category: 'Context & Setting', description: 'Unproduced aesthetic, handheld phones, real couples, raw authentic look.', synonyms: ['homemade', 'real', 'bedroom'] },
+  { name: 'Undercover', category: 'Context & Setting', description: 'Concealed cameras, voyeuristic angles, spy cam framing.', synonyms: ['hidden camera', 'spy', 'voyeur'] },
+  { name: 'Group', category: 'Context & Setting', description: 'Three or more performers engaged together, orgy, multi-scene gangbang.', synonyms: ['gangbang', 'orgy', 'threeway', 'tag-team', 'cumdump'] },
+  { name: 'Party', category: 'Context & Setting', description: 'Gathering, social atmosphere, group celebration or chill setting.', synonyms: ['sex party', 'chill'] }
 ];
 
 /**

@@ -89,11 +89,21 @@ export interface WatchlistItem {
   notes: string;
 }
 
+export interface PlaybackBridgeSettings {
+  enabled: boolean;
+  type: 'shortcut';
+  shortcutName: string;
+  playbackAppName: string;
+  version: string;
+  lastTestedAt?: number;
+}
+
 export interface CollectionSettings {
   id: string;
   schemaVersion?: number;
   vocabularies: Record<string, string[]>;
   thresholds: Record<string, number>;
   preferences: Record<string, any>;
+  playback?: PlaybackBridgeSettings;
   updatedAt?: number;
 }

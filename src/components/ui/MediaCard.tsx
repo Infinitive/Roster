@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Video } from '../../types';
 import Badge from './Badge';
 import TagChip from './TagChip';
+import PlayButton from './PlayButton';
 import { 
   Bookmark, 
   BookmarkCheck, 
@@ -158,7 +159,9 @@ export default function MediaCard({
           </div>
 
           {/* Interactive Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
+            <PlayButton video={video} size="xs" variant="primary" />
+
             {onToggleWatchlist && (
               <button
                 type="button"
@@ -184,7 +187,7 @@ export default function MediaCard({
 
             <Link
               to={`/video/${video.id}`}
-              className="text-[11px] font-medium px-2 py-1 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors ml-1"
+              className="text-[11px] font-medium px-2 py-1 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors"
             >
               View
             </Link>

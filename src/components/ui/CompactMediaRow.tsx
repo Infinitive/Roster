@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Video } from '../../types';
 import Badge from './Badge';
+import PlayButton from './PlayButton';
 import { 
   Bookmark, 
   BookmarkCheck, 
@@ -91,6 +92,8 @@ export default function CompactMediaRow({
 
       {/* Trailing Actions */}
       <div className="flex items-center gap-2 flex-none">
+        <PlayButton video={video} size="xs" variant="primary" />
+
         {video.personalRating && (
           <span className="flex items-center gap-1 text-amber-400 text-xs font-medium px-2 py-0.5 rounded bg-amber-950/30 border border-amber-900/40">
             <Star size={11} className="fill-amber-400" />

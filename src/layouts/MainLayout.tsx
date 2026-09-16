@@ -70,7 +70,7 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col h-screen bg-[#090a0f] text-zinc-100 font-sans selection:bg-amber-500/20 selection:text-amber-200">
       {/* Top Editorial Masthead */}
-      <header className="flex-none px-4 sm:px-6 py-2.5 bg-[#0f1118]/95 backdrop-blur border-b border-zinc-800/80 flex items-center justify-between z-20">
+      <header className="flex-none px-4 sm:px-6 pt-[max(env(safe-area-inset-top),0.625rem)] pb-2.5 bg-[#0f1118]/95 backdrop-blur border-b border-zinc-800/80 flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-3 group">
             <RosterBrand variant="logo" size={30} className="group-hover:scale-105 transition-transform" />

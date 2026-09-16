@@ -1,187 +1,118 @@
-# T9 Media Registry
+<p align="center">
+  <img src="public/brand/roster-logo.png" width="96" alt="Roster logo" />
+</p>
 
-> A private, local-first media catalog and behavioral intelligence system for a personal adult media collection.
+<h1 align="center">ROSTER</h1>
+<p align="center"><b>A private, local-first front office for one man's personal media collection.</b></p>
 
-**T9 Media Registry** is a mobile-first Progressive Web App (PWA) designed to turn a large personal media collection into a structured, searchable, maintainable, and increasingly intelligent personal library.
+<p align="center">
+  <img alt="status" src="https://img.shields.io/badge/status-active%20development-orange?style=flat-square" />
+  <img alt="platform" src="https://img.shields.io/badge/platform-PWA%20%2F%20mobile--first-111111?style=flat-square" />
+  <img alt="storage" src="https://img.shields.io/badge/storage-local--first%20(IndexedDB)-111111?style=flat-square" />
+  <img alt="stack" src="https://img.shields.io/badge/stack-React%2019%20%2B%20TypeScript-111111?style=flat-square" />
+  <img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-111111?style=flat-square" />
+</p>
 
-The physical media remains on the user's external storage. The Registry is the **metadata, organization, history, analytics, discovery, and decision-support layer** that sits on top of that collection.
+---
 
-The project is intentionally designed around a simple principle:
+Every collection deserves a front office. **Roster** is that front office — a mobile‑first Progressive Web App that turns a personal media library into something with a roster, a schedule, a scouting department, and a stat sheet.
 
-> **The collection should become easier to browse, easier to maintain, and more useful over time — without requiring the user to manually maintain a complicated database.**
+The tape stays on your storage. Roster never hosts, streams, or serves the underlying files. What it manages is everything *around* them: who's on the roster, what they're tagged for, when they last saw the field, how they graded out, and who's due for a call-up.
+
+> **The mission:** the bigger the collection gets, the *easier* it should be to run — not harder.
 
 ---
 
 ## Table of Contents
 
-* [Overview](#overview)
-* [What T9 Is](#what-t9-is)
-* [Design Philosophy](#design-philosophy)
-* [Core Concepts](#core-concepts)
-* [Collection Organization](#collection-organization)
-* [File Naming Convention](#file-naming-convention)
-* [Application Architecture](#application-architecture)
-* [Data Model](#data-model)
-* [Storage](#storage)
-* [Application Areas](#application-areas)
-* [Analytics and Intelligence](#analytics-and-intelligence)
-* [Discovery](#discovery)
-* [Data Integrity and Reconciliation](#data-integrity-and-reconciliation)
-* [Provenance and Research Metadata](#provenance-and-research-metadata)
-* [PWA and Mobile Design](#pwa-and-mobile-design)
-* [AI Integration](#ai-integration)
-* [Project Structure](#project-structure)
-* [Technology Stack](#technology-stack)
-* [Getting Started](#getting-started)
-* [Development Commands](#development-commands)
-* [Data Import and Export](#data-import-and-export)
-* [Privacy and Security](#privacy-and-security)
-* [Current State](#current-state)
-* [Known Limitations and Ongoing Work](#known-limitations-and-ongoing-work)
-* [Design Principles for Future Development](#design-principles-for-future-development)
-* [Roadmap](#roadmap)
-* [License](#license)
+- [Why Roster Exists](#why-roster-exists)
+- [The Front Office](#the-front-office) — feature tour
+- [League Structure](#league-structure) — how the physical collection is organized
+- [File Naming Convention](#file-naming-convention)
+- [Data Model](#data-model)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Available Scripts](#available-scripts)
+- [Deployment](#deployment)
+- [Import / Export](#import--export)
+- [Privacy](#privacy)
+- [Roadmap](#roadmap)
+- [Design Principles](#design-principles)
+- [License](#license)
 
 ---
 
-# Overview
+## Why Roster Exists
 
-T9 Media Registry is a **local-first collection management application** for a personal adult media library.
+A folder of files can only answer one question: *what do I have?*
 
-It is not intended to host, distribute, or stream the underlying collection. Instead, it maintains structured metadata describing the files stored elsewhere.
+Roster is built to answer the questions that actually matter for a collection that's grown past the point of memory:
 
-The Registry provides a single interface for:
+- What is this, and where does it belong?
+- What have I actually watched — and what's just taking up a roster spot?
+- What consistently performs, and what's dead weight?
+- What have I slept on that deserves another look?
+- Where is my metadata thin, wrong, or duplicated?
 
-* browsing the collection
-* viewing individual media records
-* organizing content by participant count and primary category
-* maintaining performers and tags
-* recording viewing/session history
-* maintaining a watchlist
-* evaluating collection and behavioral patterns
-* generating discovery recommendations
-* reconciling imported metadata
-* tracking data provenance
-* maintaining collection settings and vocabularies
-* importing and exporting registry data
-* optionally bridging playback to another application
+That means Roster isn't one app so much as five, running under one roof:
 
-The current application is implemented as a React + TypeScript PWA with IndexedDB-backed local storage.
+**Roster · Session Ledger · Scouting Report · Discovery Engine · Data Integrity Desk**
 
-The repository contains the **application code and supporting metadata**, not the underlying personal media collection.
+It's opinionated on purpose. It isn't trying to be a general-purpose media manager — it's built around one collection, one owner, and one way of browsing: fast, on a phone, with real signal instead of noise.
 
 ---
 
-# What T9 Is
+## The Front Office
 
-T9 is best understood as a **personal media intelligence layer**.
+Roster is organized like a sports operation. Here's who does what.
 
-The physical collection answers:
+### 🏟️ Overview — the home page
+The daily scoreboard: roster size, recent call-ups, hot streaks, and a snapshot of what's trending before you even open a tab.
 
-> "What files do I have?"
+### 📋 Roster (Collection)
+The full active roster — grid or ranked list — with every unit's folder placement, performer credits, tags, resolution, and rating on display. This is the browse-and-filter home base, built for fast mobile scanning over deep menus.
 
-The Registry is intended to answer considerably more:
+### ⚡ Quick Add
+Sign a new player in under 60 seconds. Drop in a filename, Roster parses performers, title, tags, and resolution straight out of the naming convention — you confirm and move on. Enrich later; capture now.
 
-> "What is this?"
+### 📓 Session Ledger
+The box score. Every rotation gets logged — date, duration, which videos were in play, how it graded out (1–5), orgasm status, vibe, and whether it was a *strong combination* worth remembering. This is the behavioral half of the system: not what you own, but what you actually do with it.
 
-> "Where does it belong?"
+### 🎯 The Lineup (Watchlist)
+Your active queue — what's next in rotation, what needs research, and what's flagged for rediscovery. Three lanes, one list, zero decision fatigue.
 
-> "What have I watched?"
+### 🔎 Discovery & Rotation
+The scouting department. Ten distinct discovery modes pull from the archive with a real strategy behind each one:
 
-> "What consistently performs well?"
+| Mode | Intent |
+|---|---|
+| **Surprise Me** | Balanced pull across favorites and novelty |
+| **Blind Pull** | Zero preconceptions, no weighting |
+| **High Signal** | Strictly from your top-rated, proven performers |
+| **Unwatched** | Fresh territory — zero logged sessions |
+| **Rediscover** | Liked before, untouched in 30+ days |
+| **Deep Cut** | Rare, low-visibility, worth a second look |
+| **Old Favorite** | Former hits worth a rematch |
+| **Category Explorer** | Deliberate dive into one folder, tag, or performer |
+| **Gap Explorer** | Surfaces underrepresented corners of the collection |
+| **Random** | Exactly what it says |
 
-> "What have I neglected?"
+### 📊 Behavioral Intelligence (Analytics)
+The stat sheet. Ownership vs. usage, tag and performer performance, folder health, combination dynamics, and metadata hygiene — all computed from real session history, not vibes.
 
-> "What patterns exist across tags, performers, folders, and sessions?"
+### 🧭 Guide
+The rulebook: the tagging vocabulary, rating scale, orgasm-status legend, and discovery-mode glossary, all in one reference page.
 
-> "What should I rediscover?"
-
-> "What should I consider next?"
-
-> "Where is the collection metadata incomplete or inconsistent?"
-
-The application therefore combines several traditionally separate functions:
-
-**Library + Metadata Database + Session Journal + Analytics Engine + Discovery Engine + Data Quality System**
-
----
-
-# Design Philosophy
-
-T9 was designed around the actual way the collection is browsed and used rather than around generic media-library conventions.
-
-## Low friction
-
-The system should minimize unnecessary decisions.
-
-Browsing is expected to happen primarily on a phone, often through rapid visual scanning. Metadata therefore needs to support browsing rather than obstruct it.
-
-## One-place organization
-
-Every physical file belongs in exactly one collection location.
-
-The Registry should describe that canonical location rather than encourage duplicate copies or redundant categorization.
-
-## Folders represent the primary browse signal
-
-The folder structure deliberately remains relatively shallow.
-
-Secondary information belongs in metadata and filenames rather than being represented by increasingly deep folder trees.
-
-## Structure should grow from real volume
-
-New categories should not be invented simply because a theoretical distinction exists.
-
-Catch-all categories are allowed to function as staging areas. A coherent theme earns its own category when enough actual material accumulates to justify the additional browsing decision.
-
-## Metadata should become more intelligent over time
-
-A newly imported record may begin with imperfect metadata.
-
-The system therefore distinguishes between raw information, parsed information, researched information, and user-confirmed information rather than pretending that every field is equally trustworthy.
-
-## Analytics should support decisions
-
-The purpose of analytics is not to produce attractive numbers for their own sake.
-
-Useful analytics should answer questions such as:
-
-* What is actually being used?
-* What performs consistently?
-* What is being overlooked?
-* Which tags correlate with stronger sessions?
-* Which parts of the collection are overrepresented?
-* Where are there gaps?
-* What should be rediscovered?
+### ⚙️ Settings / More
+Front-office administration — vocabularies, thresholds, preferences, playback bridge configuration, and import/export.
 
 ---
 
-# Core Concepts
+## League Structure
 
-T9 revolves around six primary entities.
-
-| Entity                  | Purpose                                                                  |
-| ----------------------- | ------------------------------------------------------------------------ |
-| **Video**               | Canonical metadata record for a collection item                          |
-| **Session**             | A historical viewing/session record                                      |
-| **Performer**           | Normalized performer identity referenced by videos                       |
-| **Tag**                 | Canonical descriptive classification                                     |
-| **Watchlist Item**      | Deferred or intentional rediscovery queue                                |
-| **Collection Settings** | User-controlled vocabularies, thresholds, preferences, and configuration |
-
-These entities are stored independently and related through stable identifiers.
-
-This allows the application to analyze relationships without duplicating metadata throughout the interface.
-
----
-
-# Collection Organization
-
-The physical collection follows a deliberately shallow hierarchy.
-
-The primary top-level axis is **participant count**.
-
-The conceptual structure is:
+The physical collection follows a deliberately shallow hierarchy, organized primarily by participant count:
 
 ```text
 Collection/
@@ -206,1240 +137,227 @@ Collection/
     └── Other Group/
 ```
 
-The exact physical organization is governed by the collection's reference guide rather than by arbitrary application UI conventions.
+**Placement rules, in order:**
 
-## Placement algorithm
+1. Determine participant count → top-level category.
+2. Identify the strongest remaining browse signal (size → intensity → taboo/power → muscle → ethnicity → other).
+3. Drop into the matching subfolder; use `Other` when no signal dominates.
+4. One file, one home — never duplicate a placement.
 
-When placing a new item:
+A catch-all `Other` folder graduates into its own category once a coherent theme hits roughly **6–8 items**. Folders aim for ~12 items, with **18–20 as the practical mobile-browsing ceiling**.
 
-1. Determine participant count.
-2. Select the corresponding top-level category.
-3. Identify the strongest remaining browse signal.
-4. Resolve competing signals using the established priority hierarchy.
-5. Use the appropriate `Other` category when no signal is sufficiently dominant.
-6. Never create duplicate physical placements.
-7. Never force an ambiguous item into an overly specific category.
+---
 
-The current collection guide establishes the primary priority order as:
+## File Naming Convention
+
+Every file follows a fixed three-part format so the filename itself carries metadata, even when thumbnails don't load on mobile:
 
 ```text
-Size
-  ↓
-Rough / Intensity
-  ↓
-Taboo / Power
-  ↓
-Muscle
-  ↓
-Ethnic
-  ↓
-Other
+Performers | Descriptive Title | Key Tags [Resolution]
 ```
 
-The purpose of this hierarchy is to keep browsing predictable.
-
----
-
-# File Naming Convention
-
-Physical filenames use a consistent three-part structure:
-
 ```text
-Performers | Descriptive Title | Key Tags [resolution]
+Performer A & Performer B | Descriptive Scene Title | Size, Rough, Public [1080p]
 ```
 
-For example:
+Roster's parser (`src/engines/parser.ts`) reads this format directly on **Quick Add**, extracting performers, title, tags, and resolution automatically. Original and normalized values are both retained, so cleanup never destroys provenance.
+
+---
+
+## Data Model
+
+Six entities, related by stable IDs rather than duplicated data:
+
+| Entity | Role |
+|---|---|
+| **Video** | Canonical record for one collection item — performers, tags, folder, rating, provenance |
+| **Session** | A logged rotation — date, videos involved, grade, vibe, notes |
+| **Performer** | Normalized identity, referenced (not copy-pasted) across videos |
+| **Tag** | Canonical, categorized descriptor with synonym matching |
+| **Watchlist Item** | A queued item with status (next up / research / rediscover) |
+| **Collection Settings** | Vocabularies, thresholds, preferences, playback config |
+
+**Provenance is first-class.** Every field on a `Video` can carry a confidence level, so the system never treats a guess and a confirmed fact the same way:
 
 ```text
-Performer A & Performer B | Descriptive Scene Title | Studio, Size, Breeding, Rough [1080p]
+raw → parsed → research-confirmed → user-confirmed
 ```
 
-The convention exists primarily because the collection is frequently browsed through a mobile file browser where thumbnails may be unreliable.
-
-The filename therefore acts as a **compact secondary metadata display**.
-
-Naming principles include:
-
-* performers first
-* use known performer names when available
-* use `Unknown` when identity is genuinely unavailable
-* use cleaned and informative descriptive titles
-* use a small number of consistent key tags
-* place resolution at the end
-* use `|` as the visual separator
-* normalize spelling and abbreviations where appropriate
-* avoid unnecessary filename complexity
-
-The application stores both original and normalized metadata where appropriate so that cleanup does not necessarily destroy provenance.
+This matters most in the 30-tag canonical vocabulary (`src/data/canonicalTags.ts`), split across four categories — *Archetype & Identity, Sexual Dynamic & Vibe, Acts & Mechanics, Context & Setting* — each with synonym lists so messy imported tags reconcile against a clean, consistent taxonomy instead of sprawling indefinitely.
 
 ---
 
-# Application Architecture
+## Architecture
 
-T9 is a client-side application organized around several layers.
+Roster keeps a hard line between **data**, **logic**, and **presentation**:
 
 ```text
-┌─────────────────────────────────────────┐
-│              React UI                   │
-│ Pages / Components / Layout / Context   │
-└────────────────────┬────────────────────┘
-                     │
-┌────────────────────▼────────────────────┐
-│             Domain Engines              │
-│ Analytics / Discovery / Integrity       │
-│ Parsing / Reconciliation / History      │
-│ Import & Export                         │
-└────────────────────┬────────────────────┘
-                     │
-┌────────────────────▼────────────────────┐
-│              Data Model                 │
-│ Video / Session / Performer / Tag       │
-│ Watchlist / Settings                    │
-└────────────────────┬────────────────────┘
-                     │
-┌────────────────────▼────────────────────┐
-│          IndexedDB Storage              │
-│                idb                      │
-└─────────────────────────────────────────┘
+Raw records (IndexedDB)
+        │
+        ▼
+  Domain engine  ← analytics, discovery, integrity, parser, reconciliation, history, importExport
+        │
+        ▼
+Normalized result
+        │
+        ▼
+   UI component  ← renders only, never recalculates
 ```
 
-The architecture intentionally separates:
+Every engine in `src/engines/` is a pure(ish), independently testable TypeScript module — no React, no DOM. That's what `npm test` exercises directly (see [`selfCheck.ts`](src/utils/selfCheck.ts)): canonical tag coverage, parser behavior, schema migrations, integrity auditing, analytics output, and all ten discovery modes, without spinning up a browser.
 
-* presentation
-* application state
-* domain logic
-* storage
-* data definitions
-
-This is important because analytics and integrity rules should not be buried inside individual UI components.
+**Why it's built this way:**
+- Analytics and discovery logic can be tested and reasoned about in isolation.
+- The UI layer stays dumb on purpose — it renders what the engines decide.
+- Reconciliation and integrity checks are *inspectable*, never silent. Nothing auto-fixes ambiguous metadata behind your back.
 
 ---
 
-# Data Model
+## Tech Stack
 
-The central `Video` record contains both collection metadata and lifecycle information.
+| Layer | Choice |
+|---|---|
+| UI | React 19 + TypeScript, React Router 7 |
+| Styling | Tailwind CSS 4 (via `@tailwindcss/vite`), `clsx` / `tailwind-merge` |
+| Motion | `motion` (Framer Motion successor) |
+| Icons | `lucide-react` |
+| Storage | IndexedDB via [`idb`](https://github.com/jakearchibald/idb) — fully local, no backend database |
+| Build | Vite 6 |
+| PWA | Custom service worker + manifest, installable, offline-capable |
+| AI (optional) | `@google/genai` dependency scaffolded for future enrichment features — see [Roadmap](#roadmap) |
+| Testing | `tsx`-run self-check suite (`npm test`), `tsc --noEmit` for type-safety (`npm run lint`) |
 
-Conceptually, a video contains:
+---
+
+## Project Structure
 
 ```text
-Video
-├── Identity
-│   └── id
-├── Physical file
-│   ├── filename
-│   └── relativePath
-├── Organization
-│   ├── participantCount
-│   └── folder
-├── Performers
-│   ├── performerIds
-│   └── performerDisplay
-├── Descriptive metadata
-│   ├── title
-│   ├── tagIds
-│   ├── originalTags
-│   ├── resolution
-│   └── originalResolution
-├── Media metadata
-│   ├── source
-│   ├── duration
-│   └── dateAdded
-├── Personal metadata
-│   ├── personalRating
-│   ├── vibe
-│   ├── status
-│   └── notes
-├── Lifecycle
-│   ├── createdAt
-│   └── updatedAt
-└── Provenance / research
-    ├── provenance
-    ├── researchTitle
-    ├── alternateTitle
-    ├── productionStudio
-    ├── releaseYear
-    ├── datasetType
-    └── flags
-```
-
-Sessions are independent records.
-
-A session can reference multiple videos and contains information such as:
-
-* date
-* start time
-* duration
-* associated video IDs
-* session rating
-* orgasm status
-* vibe
-* whether a strong combination was present
-* notes
-* creation/update timestamps
-
-This separation makes it possible to analyze **collection ownership independently from collection usage**.
-
----
-
-# Storage
-
-T9 uses **IndexedDB** through the `idb` library.
-
-The database is named:
-
-```text
-t9-registry
-```
-
-The current schema contains stores for:
-
-```text
-videos
-sessions
-performers
-tags
-watchlist
-settings
-```
-
-Indexed fields currently support common operations such as:
-
-* folder lookup
-* rating lookup
-* date-added lookup
-* normalized performer lookup
-* normalized tag lookup
-* tag-category lookup
-* session-date lookup
-* watchlist-by-video lookup
-
-Database upgrades are handled through a migration layer.
-
-On initialization, the application also performs canonical tag seeding and relationship reconciliation.
-
----
-
-# Application Areas
-
-The application currently exposes a number of distinct functional areas.
-
-## Overview
-
-The Overview experience provides a high-level entry point into the collection and its current state.
-
-It is intended to answer:
-
-> "What matters right now?"
-
-rather than simply reproducing a database table.
-
----
-
-## Collection
-
-The Collection area provides the primary library-browsing experience.
-
-It supports viewing the actual media records and moving from collection-level browsing into individual video details.
-
-The UI uses reusable media-oriented components rather than relying exclusively on dense tables.
-
----
-
-## Video Detail
-
-Individual video records can be inspected and managed through a dedicated detail view.
-
-This provides a richer representation of the metadata associated with a single item.
-
-The detail layer also provides the appropriate location for future intelligence around an individual item's:
-
-* usage
-* ratings
-* history
-* related performers
-* related tags
-* discovery status
-* metadata quality
-
----
-
-## Quick Add
-
-Quick Add is intended to make adding a new record fast.
-
-The goal is:
-
-```text
-Identify file
-    ↓
-Enter essential metadata
-    ↓
-Validate
-    ↓
-Save
-    ↓
-Continue browsing
-```
-
-The system should not require a complete research workflow every time a new item is encountered.
-
-Metadata can become richer later.
-
----
-
-## Sessions
-
-Sessions represent actual historical use of the collection.
-
-Rather than treating every video as an isolated rating, session records allow T9 to understand combinations and context.
-
-This enables future analysis such as:
-
-```text
-Video → how often used?
-
-Tag → how often associated with strong sessions?
-
-Performer → how often encountered?
-
-Combination → does this group of characteristics perform well?
-
-Time → how does behavior change?
-```
-
----
-
-## Watchlist
-
-The Watchlist provides a deliberate queue for content that the user intends to revisit.
-
-This is distinct from Favorites.
-
-**Favorites** represent a small high-confidence working set.
-
-**Watchlist** represents items that deserve intentional future attention.
-
----
-
-## Analytics
-
-Analytics is the collection-level intelligence layer.
-
-It is designed to move beyond simple counts and toward relationships between:
-
-* collection composition
-* session behavior
-* tags
-* performers
-* folders
-* ratings
-* time
-* usage frequency
-* metadata quality
-
-The analytics engine is implemented separately from the page that displays its results.
-
----
-
-## Discovery
-
-Discovery turns analysis into actionable output.
-
-The goal is not merely to say:
-
-> "Here are your statistics."
-
-It should eventually be able to say:
-
-> "Here are the items you are most likely to want to rediscover."
-
-Potential discovery categories include:
-
-* Rediscover
-* Unwatched
-* High Signal
-* Deep Cut
-* underused high-value items
-* collection gaps
-* neglected folders
-* promising tag combinations
-* candidate videos
-
-Discovery logic is intentionally separate from UI presentation.
-
----
-
-## Insight
-
-Insight provides a higher-level surface for interpreting the data produced by the analytical layer.
-
-This allows future intelligence to be presented as conclusions and recommendations rather than requiring the user to interpret raw metrics manually.
-
----
-
-## Guide
-
-The Guide area exposes the collection's operating rules inside the application.
-
-This is important because the organization system is not self-explanatory.
-
-The guide documents the rules governing:
-
-* placement
-* naming
-* catch-all categories
-* Favorites
-* maintenance
-* scaling
-* edge cases
-
-The supplied Collection Guide remains the authoritative reference for those rules.
-
----
-
-## Settings / More
-
-Settings and supporting administrative functions provide access to:
-
-* collection configuration
-* vocabularies
-* thresholds
-* preferences
-* import/export
-* playback configuration
-* maintenance and related utilities
-
----
-
-# Analytics and Intelligence
-
-T9's most important architectural distinction is between **data** and **intelligence**.
-
-A UI component should not independently calculate collection statistics.
-
-Instead:
-
-```text
-Raw records
-    ↓
-Domain engine
-    ↓
-Normalized analytical result
-    ↓
-UI presentation
-```
-
-This makes analytical behavior:
-
-* testable
-* reusable
-* easier to audit
-* easier to change
-* independent of presentation
-
-The current repository includes dedicated engines for analytics, discovery, history, integrity, parsing, reconciliation, and import/export.
-
----
-
-# Behavioral Intelligence
-
-The long-term purpose of session logging is to create a second dimension of the collection.
-
-There are two fundamentally different questions:
-
-### Ownership
-
-"What exists in the collection?"
-
-### Behavior
-
-"What do I actually use, return to, rate highly, or overlook?"
-
-The intelligence layer exists to compare those two.
-
-This enables concepts such as:
-
-```text
-High ownership + high use
-High ownership + low use
-Low ownership + high performance
-Rare + repeatedly successful
-Frequently encountered + consistently weak
-Unwatched + potentially high signal
-```
-
-The important insight is that **collection size does not equal collection value**.
-
----
-
-# Tag Intelligence
-
-Tags are normalized entities rather than arbitrary strings.
-
-A tag contains:
-
-* stable ID
-* display name
-* normalized name
-* category
-* canonical status
-* synonyms
-* creation metadata
-
-The repository includes a canonical tag dataset.
-
-This allows the system to distinguish between:
-
-```text
-Raw tag
-    ↓
-Normalized tag
-    ↓
-Canonical category
-    ↓
-Behavioral performance
-```
-
-The architecture is designed to support increasingly sophisticated tag analysis as sufficient session data accumulates.
-
----
-
-# Performer Intelligence
-
-Performers are also modeled independently.
-
-This allows future analytics to answer questions such as:
-
-* How frequently does a performer occur?
-* How often are they associated with sessions?
-* What is the average associated session performance?
-* When were they last encountered?
-* Which performers appear disproportionately in Favorites?
-* Which performers are present in the collection but rarely used?
-
-Again, the objective is not simply to create a performer directory.
-
-It is to understand the relationship between the **metadata graph** and actual behavior.
-
----
-
-# Data Integrity and Reconciliation
-
-Because this is a relational system disguised behind a simple UI, data integrity is a first-class concern.
-
-The repository contains dedicated integrity and reconciliation engines.
-
-These exist to detect and repair relationships involving:
-
-* performers
-* tags
-* videos
-* sessions
-* imported records
-* canonical metadata
-
-The reconciliation interface provides a way to inspect discrepancies rather than silently changing user data.
-
-This distinction matters:
-
-> **A system should not silently "fix" ambiguous metadata that the user may have intentionally chosen.**
-
----
-
-# Provenance and Research Metadata
-
-One of the more important architectural features is field-level provenance.
-
-Metadata can have different confidence levels:
-
-```text
-raw
-parsed
-research-confirmed
-user-confirmed
-```
-
-Optional provenance information can include:
-
-* source
-* confidence
-* confirmation time
-* notes
-
-This allows the application to preserve the distinction between:
-
-> "This is what the original file said."
-
-and
-
-> "This is what the system inferred."
-
-and
-
-> "This has been externally researched."
-
-and
-
-> "The user personally confirmed this."
-
-That distinction becomes increasingly important as automated enrichment is introduced.
-
----
-
-# PWA and Mobile Design
-
-T9 is designed primarily for **mobile use**, particularly phone-sized interfaces.
-
-The project includes:
-
-* PWA manifest
-* service worker
-* Apple touch icon
-* multiple application icon sizes
-* maskable icon
-* responsive React UI
-* mobile-oriented reusable components
-
-The application is intentionally designed around short, low-friction interactions.
-
-Important mobile principles include:
-
-* readable metadata
-* compact cards
-* large touch targets
-* shallow navigation
-* quick filtering
-* limited visual clutter
-* strong hierarchy
-* minimal repetitive data entry
-
-The physical collection itself is also optimized for phone-based browsing, which is why filenames and folder names are treated as part of the user experience rather than merely filesystem implementation details.
-
----
-
-# AI Integration
-
-The project includes Google Generative AI dependencies and an environment template for optional AI-related configuration.
-
-AI is intended as an **augmentation layer**, not as the authoritative database.
-
-That means AI-generated information should be treated as:
-
-```text
-Candidate information
-        ↓
-Parsed / normalized information
-        ↓
-Potential research result
-        ↓
-User confirmation when required
-```
-
-The application data model explicitly supports provenance so that automated enrichment can remain distinguishable from user-confirmed information.
-
-AI should never be allowed to silently overwrite trusted user metadata merely because an automated result appears plausible.
-
----
-
-# Project Structure
-
-The repository is organized approximately as follows:
-
-```text
-T9-Media-Registry/
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
-│
+Roster/
 ├── public/
-│   ├── site.webmanifest
-│   ├── sw.js
-│   ├── favicon.svg
-│   ├── favicon.ico
-│   ├── favicon-96x96.png
-│   ├── apple-touch-icon.png
-│   ├── web-app-manifest-192x192.png
-│   ├── web-app-manifest-512x512.png
-│   └── brand/
-│       ├── roster-logo.png
-│       └── roster-wordmark.png
-│
-├── scripts/
-│   └── generateIcons.js
+│   ├── brand/                  # Roster logo + wordmark
+│   ├── site.webmanifest        # PWA manifest
+│   └── sw.js                   # Service worker
 │
 ├── src/
-│   │
 │   ├── components/
 │   │   ├── ReconciliationPanel.tsx
-│   │   └── ui/
-│   │       ├── Badge.tsx
-│   │       ├── CompactMediaRow.tsx
-│   │       ├── EmptyState.tsx
-│   │       ├── MediaCard.tsx
-│   │       ├── PageHeader.tsx
-│   │       ├── PlayButton.tsx
-│   │       ├── SegmentedControl.tsx
-│   │       ├── T9Mark.tsx
-│   │       └── TagChip.tsx
+│   │   └── ui/                 # Badge, MediaCard, PageHeader, TagChip, etc.
 │   │
 │   ├── context/
-│   │   └── PlaybackContext.tsx
+│   │   └── PlaybackContext.tsx # External playback-app bridge state
 │   │
 │   ├── data/
-│   │   ├── canonicalTags.ts
+│   │   ├── canonicalTags.ts    # The 30-tag vocabulary
 │   │   └── seedList.ts
 │   │
-│   ├── engines/
-│   │   ├── analytics.ts
-│   │   ├── discovery.ts
-│   │   ├── history.ts
-│   │   ├── importExport.ts
-│   │   ├── integrity.ts
-│   │   ├── parser.ts
-│   │   └── reconciliation.ts
+│   ├── engines/                # All business logic — framework-agnostic
+│   │   ├── analytics.ts        # Behavioral Intelligence
+│   │   ├── discovery.ts        # 10 discovery modes
+│   │   ├── history.ts          # Per-video watch history
+│   │   ├── importExport.ts     # Backup / restore
+│   │   ├── integrity.ts        # Data quality auditing
+│   │   ├── parser.ts           # Filename → structured metadata
+│   │   └── reconciliation.ts   # Duplicate + mismatch detection
 │   │
-│   ├── layouts/
-│   │   └── MainLayout.tsx
-│   │
-│   ├── pages/
-│   │   ├── Analytics.tsx
-│   │   ├── Collection.tsx
-│   │   ├── Discovery.tsx
-│   │   ├── Guide.tsx
-│   │   ├── Insight.tsx
-│   │   ├── More.tsx
-│   │   ├── Overview.tsx
-│   │   ├── QuickAdd.tsx
-│   │   ├── SessionDetail.tsx
-│   │   ├── Sessions.tsx
-│   │   ├── Settings.tsx
-│   │   ├── VideoDetail.tsx
-│   │   └── Watchlist.tsx
+│   ├── pages/                  # One file per route (Overview, Collection,
+│   │                           #  Sessions, Discovery, Analytics, Guide, …)
 │   │
 │   ├── storage/
-│   │   ├── db.ts
-│   │   └── migrations.ts
+│   │   ├── db.ts                # IndexedDB schema + access layer
+│   │   └── migrations.ts        # Versioned schema migrations
 │   │
-│   ├── types/
-│   │   ├── analytics.ts
-│   │   ├── discovery.ts
-│   │   └── index.ts
-│   │
-│   └── utils/
-│       ├── initDb.ts
-│       ├── playback.ts
-│       └── selfCheck.ts
+│   └── types/                  # Shared TypeScript contracts
 │
-├── metadata.json
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── bun.lock
+└── scripts/
+    └── generateIcons.js         # PWA icon generation
 ```
-
-The repository currently follows this separation between UI, engines, storage, types, and utilities.
 
 ---
 
-# Technology Stack
+## Getting Started
 
-## Frontend
+**Requirements:** Node.js 20+
 
-* React 19
-* TypeScript
-* Vite
-* Tailwind CSS
-* Lucide React
+```bash
+git clone https://github.com/Infinitive/Roster.git
+cd Roster
+npm install
+npm run dev
+```
 
-## Application / UI
+The dev server runs at `http://localhost:3000` with hot reload. Roster is fully client-side — there's no backend to stand up. Open it, and it'll seed its own local IndexedDB store on first load.
 
-* React Router
-* Motion
-* reusable TypeScript UI components
+---
 
-## Persistence
+## Available Scripts
 
-* IndexedDB
-* `idb`
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the Vite dev server (port 3000) |
+| `npm run build` | Type-check-free production build → `dist/`, with a `404.html` copy for SPA routing on static hosts |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Type-check the whole project (`tsc --noEmit`) |
+| `npm test` | Run the engine self-check suite (tags, parser, migrations, integrity, analytics, all 10 discovery modes) |
+| `npm run clean` | Remove build output |
 
-## Data
-
-* UUID-based entity identifiers
-* normalized performer and tag relationships
-* versioned database migrations
-* structured import/export
-
-## Optional AI
-
-* Google Generative AI SDK
+---
 
 ## Deployment
 
-* Vite production build
-* GitHub Actions deployment workflow
-* PWA assets and service worker
+Roster ships as a static PWA. The included GitHub Actions workflow (`.github/workflows/deploy.yml`) builds on every push to `main` and deploys straight to GitHub Pages — no server, no database to provision.
 
-The current package configuration confirms the primary React, Vite, TypeScript, IndexedDB, routing, UI, motion, and AI dependencies.
+To deploy elsewhere, run `npm run build` and serve the `dist/` folder from any static host. Set `VITE_BASE_PATH` if the app isn't served from the domain root.
 
 ---
 
-# Getting Started
+## Import / Export
 
-## Requirements
-
-A current Node.js/Bun-compatible development environment is recommended.
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Infinitive/T9-Media-Registry.git
-cd T9-Media-Registry
-```
-
-Install dependencies:
-
-```bash
-bun install
-```
-
-or, where appropriate:
-
-```bash
-npm install
-```
-
-Create a local environment file from the provided template if AI functionality requiring environment configuration is being used:
-
-```bash
-cp .env.example .env
-```
-
-Then start the development server:
-
-```bash
-bun run dev
-```
-
-The current development script starts Vite on port `3000` and binds to `0.0.0.0`.
+Everything Roster knows lives in your browser's IndexedDB — which means it's also yours to move. The **Settings** page exports a complete, versioned JSON snapshot (videos, sessions, performers, tags, watchlist, settings) and can re-import it with full validation: schema-version checks, integrity auditing, and duplicate detection before anything touches your live data. Nothing is imported silently — you see what changed before it's committed.
 
 ---
 
-# Development Commands
+## Privacy
 
-The current project exposes the following scripts:
+This repository is public. The collection it describes is not.
 
-```bash
-bun run dev
-```
-
-Starts the development server.
-
-```bash
-bun run build
-```
-
-Creates a production build.
-
-The build also creates a `404.html` copy of the application entry point for deployment environments that require SPA fallback behavior.
-
-```bash
-bun run preview
-```
-
-Serves the production build locally.
-
-```bash
-bun run lint
-```
-
-Runs the TypeScript compiler in no-emit mode.
-
-```bash
-bun run test
-```
-
-Runs the repository's self-check suite.
-
-```bash
-bun run clean
-```
-
-Removes generated build/server artifacts.
-
-These commands correspond to the current `package.json` rather than hypothetical tooling.
+- No physical media files, thumbnails, or personally identifying content live in this repo.
+- All application data is stored locally in the browser via IndexedDB — nothing is transmitted to a remote server by default.
+- The optional AI dependency requires the user's own API key, configured locally; Roster does not ship one.
 
 ---
 
-# Data Import and Export
-
-Because the Registry is local-first, portability is essential.
-
-The architecture includes a dedicated import/export engine rather than coupling data portability to individual pages.
-
-The goal is that the user's registry data should remain recoverable and portable independently of the application interface.
-
-A healthy local-first system should make it possible to:
+## Roadmap
 
 ```text
-Export
-  ↓
-Portable registry data
-  ↓
-Backup / migration / inspection
-  ↓
-Import
-  ↓
-Rebuild local database
+Phase 1 — Foundation           Stable registry, local storage, browsing, sessions, watchlist, import/export ✅
+Phase 2 — Intelligence         Normalized tag/performer/folder analytics, behavioral scoring
+Phase 3 — Discovery            Opportunity analysis, ownership-vs-usage gaps, temporal trends
+Phase 4 — Assistance           AI-assisted metadata enrichment (provenance-tracked, never auto-trusted)
+Phase 5 — Maturity             A fully self-maintaining personal media intelligence system
 ```
 
-Import workflows should preserve provenance and should not blindly overwrite trusted records.
+Roster currently sits across Phases 1–2, with Discovery and integrity tooling already live. The `@google/genai` dependency is scaffolded for Phase 4 but not yet wired into the app — when it lands, AI output will flow through the same provenance system as everything else (`raw → parsed → research-confirmed → user-confirmed`), so it can augment metadata without ever silently overwriting something you confirmed yourself.
 
 ---
 
-# Privacy and Security
+## Design Principles
 
-T9 is designed for a **private personal collection**.
-
-The underlying media files are not part of this repository.
-
-The application primarily stores metadata locally in the browser's IndexedDB database.
-
-This has an important consequence:
-
-> **Installing the application does not require uploading the physical media collection to a central T9 server.**
-
-The repository itself should therefore never contain:
-
-* personal media files
-* private collection exports
-* private screenshots
-* personal session history
-* private database dumps
-* credentials
-* API keys
-* `.env` secrets
-
-Only appropriate application code, anonymized/seed data, and project documentation should be committed.
-
-AI integrations should be treated separately from the local-first storage model and configured explicitly.
+1. **Don't become a generic media manager.** Every feature is built for this collection and this browsing pattern, not "what media apps usually have."
+2. **Keep the hierarchy shallow.** No nested navigation until real volume demands it.
+3. **The registry describes the collection — it isn't the collection.** Physical files stay off-repo, always.
+4. **Relationships over duplication.** Performers, tags, sessions, and videos stay independently modeled.
+5. **Logic lives in engines, not components.** UI renders; engines decide.
+6. **Preserve provenance.** Never collapse *raw*, *parsed*, *researched*, and *confirmed* into one undifferentiated blob.
+7. **Never silently touch user data.** Imports are validated. Reconciliation is inspectable. Nothing auto-corrects behind your back.
+8. **Design for touch first.** Desktop is a bonus, not the target.
+9. **Optimize for decisions, not metrics.** A stat only earns a place on the page if it changes what you do next.
 
 ---
 
-# Current State
+## License
 
-The current repository is substantially beyond a blank prototype.
-
-The application already contains:
-
-* React/TypeScript application structure
-* routed application pages
-* reusable media-oriented UI components
-* IndexedDB persistence
-* database migrations
-* canonical tag data
-* performer and tag entities
-* video records
-* session records
-* watchlist records
-* collection settings
-* analytics engine
-* discovery engine
-* history engine
-* parsing engine
-* integrity engine
-* reconciliation engine
-* import/export engine
-* provenance-aware metadata fields
-* PWA manifest/service worker/assets
-* playback bridge infrastructure
-* automated deployment configuration
-* repository self-check tooling
-
-The current route structure includes Overview, Insight, Analytics, Discovery, Collection, Video Detail, Sessions, Watchlist, Quick Add, Guide, and supporting settings/more surfaces.
-
-The database layer currently defines stores for videos, sessions, performers, tags, watchlist items, and settings, with migration support and relationship reconciliation.
+Application source carries Apache-2.0 SPDX headers. No standalone `LICENSE` file is currently checked into the repository root — until one is added, treat the existing header convention as authoritative for reuse.
 
 ---
 
-# Known Limitations and Ongoing Work
-
-T9 is an actively developed system.
-
-Some of the intended intelligence and hardening described by the broader project specification are still being implemented.
-
-The most important distinction is:
-
-> **The architecture exists in several places before the complete product behavior does.**
-
-Known areas of ongoing work include:
-
-## Data hardening
-
-The broader project specification calls for stronger guarantees around:
-
-* duplicate detection
-* orphan references
-* participant/folder mismatches
-* malformed identifiers
-* tag normalization
-* metadata completeness
-* structural integrity
-* import validation
-
-## Analytics depth
-
-Additional analytical families are planned or being expanded around:
-
-* resolution performance
-* temporal comparisons
-* collection growth
-* recent 30/90-day behavior
-* performer intelligence
-* folder performance
-* tag-level behavioral intelligence
-* diversity/concentration
-* ownership-versus-use mismatches
-
-## Discovery depth
-
-The long-term Discovery layer is intended to produce more actionable results rather than only analytical summaries.
-
-Examples include:
-
-* Rediscover candidates
-* Unwatched candidates
-* High Signal items
-* Deep Cuts
-* underused high-performing items
-* collection-gap opportunities
-
-## Visual analytics
-
-The analytical model is intended to support compact visualizations and mobile-friendly summaries as the intelligence layer matures.
-
-## Metadata quality
-
-Imported collections may contain incomplete metadata.
-
-The system therefore needs to distinguish between:
-
-* genuinely unknown data
-* unavailable data
-* data that has not yet been researched
-* data requiring user confirmation
-
-These should not all be treated as the same kind of error.
-
----
-
-# Design Principles for Future Development
-
-Any future contribution to T9 should preserve the following principles.
-
-## 1. Do not turn T9 into a generic media-management application
-
-The system is intentionally optimized for this collection and this browsing behavior.
-
-Generic features should not be added simply because conventional media applications have them.
-
-## 2. Keep the hierarchy shallow
-
-Do not introduce increasingly nested navigation unless real collection volume demonstrates that it is necessary.
-
-## 3. Keep the physical collection and Registry separate
-
-The Registry describes the physical collection.
-
-It does not need to become the physical collection.
-
-## 4. Prefer relationships over duplication
-
-Performers, tags, sessions, and videos should remain independently modeled entities.
-
-## 5. Keep business logic out of presentation components
-
-Analytics belong in engines.
-
-Parsing belongs in engines.
-
-Integrity validation belongs in engines.
-
-UI components should render results rather than reinvent the rules.
-
-## 6. Preserve provenance
-
-Never erase the distinction between:
-
-```text
-Original
-Parsed
-Researched
-Confirmed
-```
-
-## 7. Never silently destroy user data
-
-Destructive operations should be explicit.
-
-Imports should be cautious.
-
-Reconciliation should be inspectable.
-
-Migrations should be deliberate.
-
-## 8. Design for touch first
-
-Desktop convenience should not compromise the phone experience.
-
-## 9. Optimize for useful decisions, not maximum metrics
-
-A metric is only valuable if it helps the user understand, maintain, browse, or use the collection.
-
-## 10. Do not over-engineer ahead of evidence
-
-If a category, metric, or workflow does not solve a demonstrated problem, it probably does not belong in the core interface yet.
-
----
-
-# Roadmap
-
-The long-term development direction can be summarized as:
-
-```text
-Phase 1
-────────────────────────────
-Stable collection registry
-Reliable local storage
-Core browsing
-Sessions
-Watchlist
-Import / Export
-Data integrity
-        ↓
-Phase 2
-────────────────────────────
-Normalized metadata
-Tag intelligence
-Performer intelligence
-Folder intelligence
-Behavioral analytics
-        ↓
-Phase 3
-────────────────────────────
-Discovery engine
-Opportunity analysis
-Ownership vs. usage analysis
-Temporal intelligence
-        ↓
-Phase 4
-────────────────────────────
-Higher-level insights
-Automated metadata assistance
-Research/provenance workflows
-Advanced discovery
-        ↓
-Phase 5
-────────────────────────────
-Mature personal media intelligence system
-```
-
-The system should evolve incrementally rather than through large architectural rewrites.
-
----
-
-# Collection Maintenance Philosophy
-
-The collection itself follows a deliberately low-maintenance cadence.
-
-The authoritative Collection Guide specifies:
-
-* apply naming and placement rules whenever new files are added
-* review catch-all folders when they become meaningfully large
-* curate Favorites periodically
-* remove true duplicates and inferior near-duplicates
-* reconsider oversized folders only when meaningful subdivisions emerge
-* avoid forced weekly or monthly reorganization
-
-The intended target is approximately **12 items per folder**, with roughly **18–20 items** treated as a practical mobile-browsing ceiling.
-
-A coherent theme reaching approximately **6–8 items** may justify promotion from an `Other` category into a dedicated folder.
-
-These rules are intended to prevent the organizational system from becoming more burdensome than the collection itself.
-
----
-
-# Why This Architecture Matters
-
-A conventional spreadsheet can answer:
-
-> "What is row 184?"
-
-A conventional media player can answer:
-
-> "What files can I play?"
-
-T9 is intended to answer something different:
-
-> **"Given everything I own and everything I have actually done with it, what should I know, maintain, or look at next?"**
-
-That requires three layers working together:
-
-```text
-COLLECTION
-What exists?
-
-        +
-
-BEHAVIOR
-What actually happens?
-
-        +
-
-INTELLIGENCE
-What should I do with that information?
-```
-
-The Registry is being built around that model.
-
----
-
-# Project Status
-
-**Status:** Active development
-
-**Architecture:** Functional / evolving
-
-**Storage:** Local-first IndexedDB
-
-**Platform:** Progressive Web App
-
-**Primary device target:** Mobile / iPhone
-
-**Repository:** `Infinitive/T9-Media-Registry`
-
-**Default branch:** `main`
-
-The repository is public, but the underlying collection represented by the application is personal and private.
-
----
-
-# License
-
-The application source currently contains Apache 2.0 license headers in its TypeScript application code.
-
-Unless the repository's top-level licensing configuration is changed, contributors should treat the existing repository license configuration as authoritative.
-
----
-
-## Final Note
-
-T9 is deliberately not trying to be the biggest, most feature-rich media database possible.
-
-It is trying to be the **right database for one collection and one person**.
-
-The ultimate measure of success is therefore not the number of screens, metrics, charts, or database fields.
-
-It is whether the system makes the collection:
-
-**easier to understand, easier to maintain, faster to browse, and smarter about what deserves attention.**
+<p align="center"><sub>Built for one collection, one owner, one roster. Not trying to be everyone's app — just the right one for this team.</sub></p>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/brand/roster-logo.png" width="96" alt="Roster logo" />
+  <img src="public/brand/roster-logo-2.png" width="96" alt="Roster logo" />
 </p>
 
 <h1 align="center">ROSTER</h1>

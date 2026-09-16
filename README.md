@@ -356,7 +356,11 @@ Roster currently sits across Phases 1–2, with Discovery and integrity tooling 
 
 ## License
 
-Application source carries Apache-2.0 SPDX headers. No standalone `LICENSE` file is currently checked into the repository root — until one is added, treat the existing header convention as authoritative for reuse.
+## License
+
+ROSTER is licensed under the Apache License 2.0.
+
+See [LICENSE](LICENSE) for the complete license text.
 
 ---
 

@@ -61,6 +61,10 @@ export async function savePlaybackSettings(settings: PlaybackBridgeSettings): Pr
  * Builds the iOS Shortcuts invocation URL.
  * URL scheme: shortcuts://run-shortcut?name=<NAME>&input=text&text=<FULL_RELATIVE_PATH>
  */
+/**
+ * Builds the iOS Shortcuts invocation URL.
+ * URL scheme: shortcuts://run-shortcut?name=<NAME>&input=text&text=<FULL_RELATIVE_PATH>
+ */
 export function buildShortcutUrl(shortcutName: string, video: Video): string {
   const cleanShortcutName = (shortcutName || 'Play in VLC').trim();
 
@@ -68,12 +72,6 @@ export function buildShortcutUrl(shortcutName: string, video: Video): string {
   // Trim only accidental leading/trailing whitespace; do not remove
   // folder names or otherwise alter the path.
   const payload = (video.relativePath || video.filename || '').trim();
-
-  const encodedName = encodeURIComponent(cleanShortcutName);
-  const encodedPayload = encodeURIComponent(payload);
-
-  return `shortcuts://run-shortcut?name=${encodedName}&input=text&text=${encodedPayload}`;
-}
 
   const encodedName = encodeURIComponent(cleanShortcutName);
   const encodedPayload = encodeURIComponent(payload);

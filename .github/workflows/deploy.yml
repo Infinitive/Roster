@@ -36,7 +36,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          VITE_BASE_PATH: /T9-Media-Registry/
+          VITE_BASE_PATH: /Roster/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

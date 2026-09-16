@@ -853,14 +853,17 @@ T9-Media-Registry/
 │       └── deploy.yml
 │
 ├── public/
-│   ├── manifest.json
+│   ├── site.webmanifest
 │   ├── sw.js
 │   ├── favicon.svg
+│   ├── favicon.ico
+│   ├── favicon-96x96.png
 │   ├── apple-touch-icon.png
-│   ├── icon.png
-│   ├── icon-192.png
-│   ├── icon-512.png
-│   └── icon-512-maskable.png
+│   ├── web-app-manifest-192x192.png
+│   ├── web-app-manifest-512x512.png
+│   └── brand/
+│       ├── roster-logo.png
+│       └── roster-wordmark.png
 │
 ├── scripts/
 │   └── generateIcons.js

@@ -9,9 +9,9 @@ import { Sparkles, BarChart3, Bookmark } from 'lucide-react';
 type Tab = 'discovery' | 'patterns' | 'queue';
 
 const TAB_OPTIONS: SegmentOption<Tab>[] = [
-  { id: 'discovery', label: 'Discovery Modes', icon: <Sparkles size={14} /> },
-  { id: 'patterns', label: 'Collection Intelligence', icon: <BarChart3 size={14} /> },
-  { id: 'queue', label: 'Watchlist Queue', icon: <Bookmark size={14} /> },
+  { id: 'discovery', label: 'Scout Engine', icon: <Sparkles size={14} /> },
+  { id: 'patterns', label: 'The Ledger (Stats)', icon: <BarChart3 size={14} /> },
+  { id: 'queue', label: 'Lineup Queue', icon: <Bookmark size={14} /> },
 ];
 
 export default function Insight() {

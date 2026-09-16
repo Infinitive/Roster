@@ -6,22 +6,15 @@ import MediaCard from '../components/ui/MediaCard';
 import CompactMediaRow from '../components/ui/CompactMediaRow';
 import EmptyState from '../components/ui/EmptyState';
 import PageHeader from '../components/ui/PageHeader';
-import SegmentedControl from '../components/ui/SegmentedControl';
 import { 
   Search, 
   LayoutGrid, 
   List, 
-  Filter, 
   X, 
   ArrowUpDown, 
   Plus, 
-  Star, 
-  FolderTree, 
-  HelpCircle, 
-  AlertTriangle,
-  HardDrive,
-  SlidersHorizontal,
-  RotateCcw
+  RotateCcw,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -222,62 +215,63 @@ export default function Collection() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-zinc-500 space-y-3">
         <div className="w-8 h-8 rounded-full border-2 border-amber-500/20 border-t-amber-500 animate-spin" />
-        <p className="text-xs uppercase tracking-widest font-mono">Loading Library Registry...</p>
+        <p className="text-xs uppercase tracking-widest font-mono">Loading Roster Registry...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
-      {/* Page Header */}
+      {/* Editorial Page Header */}
       <PageHeader
-        title="Library"
+        sectionNumber="THE ROSTER"
+        title="Active Registry"
         badge={
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
-              {filteredVideos.length} / {videos.length}
+            <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-zinc-800">
+              {filteredVideos.length} / {videos.length} RECORDS
             </span>
             {realCount > 0 && (
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-blue-950/60 text-blue-300 border border-blue-800/50">
-                {realCount} Real
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 border border-blue-800/50">
+                {realCount} Verified
               </span>
             )}
           </div>
         }
-        subtitle="Private video archive metadata, physical hierarchy, and provenance."
+        subtitle="Complete catalog metadata, physical file hierarchy, and rotation history."
         actions={
           <div className="flex items-center gap-2">
             {/* View Mode Toggle */}
-            <div className="flex items-center p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
+            <div className="flex items-center p-1 bg-zinc-900 border border-zinc-800 rounded-lg font-mono">
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'grid' ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                className={`p-1.5 rounded transition-colors ${
+                  viewMode === 'grid' ? 'bg-zinc-800 text-amber-300 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
                 }`}
                 title="Grid View"
               >
-                <LayoutGrid size={16} />
+                <LayoutGrid size={15} />
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'list' ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                className={`p-1.5 rounded transition-colors ${
+                  viewMode === 'list' ? 'bg-zinc-800 text-amber-300 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
                 }`}
-                title="Compact List View"
+                title="Ranked List View"
               >
-                <List size={16} />
+                <List size={15} />
               </button>
             </div>
 
             {/* Quick Add Link */}
             <Link
               to="/quick-add"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs font-mono uppercase tracking-wider transition-colors"
             >
               <Plus size={14} strokeWidth={2.5} />
-              <span className="hidden sm:inline">Add Video</span>
+              <span className="hidden sm:inline">Intake</span>
             </Link>
           </div>
         }
@@ -291,10 +285,10 @@ export default function Collection() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
             <input
               type="text"
-              placeholder="Search title, performer, tags, resolution, folder..."
+              placeholder="Search performer, title, tag, resolution, folder..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#121520] border border-zinc-800/90 rounded-xl pl-10 pr-9 py-2.5 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/80 transition-all shadow-inner"
+              className="w-full bg-[#10121a] border border-zinc-800 rounded-lg pl-10 pr-9 py-2.5 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/80 transition-all shadow-inner font-mono"
             />
             {search && (
               <button
@@ -310,27 +304,27 @@ export default function Collection() {
           <button
             type="button"
             onClick={() => setShowFilterDrawer(!showFilterDrawer)}
-            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-medium transition-all ${
+            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-xs font-bold font-mono uppercase tracking-wider transition-all ${
               activeFilterCount > 0
                 ? 'bg-amber-950/40 text-amber-300 border-amber-800/70 shadow-sm'
-                : 'bg-zinc-900/90 text-zinc-300 border-zinc-800 hover:border-zinc-700'
+                : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:border-zinc-700'
             }`}
           >
-            <SlidersHorizontal size={15} />
+            <SlidersHorizontal size={14} />
             <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-amber-500 text-zinc-950 text-[10px] font-bold flex items-center justify-center">
+              <span className="w-4 h-4 rounded bg-amber-500 text-zinc-950 text-[10px] font-black flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}
           </button>
 
           {/* Sort Selector */}
-          <div className="relative">
+          <div className="relative font-mono">
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortOption)}
-              className="appearance-none bg-zinc-900/90 border border-zinc-800 rounded-xl pl-3.5 pr-8 py-2.5 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700 cursor-pointer h-full"
+              className="appearance-none bg-zinc-900 border border-zinc-800 rounded-lg pl-3.5 pr-8 py-2.5 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700 cursor-pointer h-full font-mono"
             >
               <option value="recent">Recently Added</option>
               <option value="performer">Performer A-Z</option>
@@ -344,7 +338,7 @@ export default function Collection() {
         </div>
 
         {/* Quick Shortcut Folder / Status Filter Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 font-mono">
           {['All', '0 Favorites', '1 Solo', '2 Duo', '3 Threesome', '4(+) Group'].map(f => {
             const isSelected = selectedFolder === f;
             return (
@@ -352,10 +346,10 @@ export default function Collection() {
                 key={f}
                 type="button"
                 onClick={() => setSelectedFolder(isSelected && f !== 'All' ? 'All' : f)}
-                className={`text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap transition-all ${
+                className={`text-xs px-3 py-1 rounded border font-bold whitespace-nowrap transition-all ${
                   isSelected
                     ? 'bg-zinc-800 text-amber-300 border-amber-500/50 shadow-sm'
-                    : 'bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-zinc-200 hover:bg-zinc-800/60'
+                    : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800/60'
                 }`}
               >
                 {f}
@@ -369,10 +363,10 @@ export default function Collection() {
           <button
             type="button"
             onClick={() => setWatchFilter(watchFilter === 'unwatched' ? 'all' : 'unwatched')}
-            className={`text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap transition-all ${
+            className={`text-xs px-3 py-1 rounded border font-medium whitespace-nowrap transition-all ${
               watchFilter === 'unwatched'
                 ? 'bg-zinc-800 text-amber-300 border-amber-500/50'
-                : 'bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-zinc-200'
+                : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200'
             }`}
           >
             Fresh / Unwatched
@@ -381,22 +375,22 @@ export default function Collection() {
           <button
             type="button"
             onClick={() => setWatchFilter(watchFilter === 'watchlist' ? 'all' : 'watchlist')}
-            className={`text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap transition-all ${
+            className={`text-xs px-3 py-1 rounded border font-medium whitespace-nowrap transition-all ${
               watchFilter === 'watchlist'
                 ? 'bg-amber-950/50 text-amber-300 border-amber-800'
-                : 'bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-zinc-200'
+                : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200'
             }`}
           >
-            In Watchlist ({watchlist.length})
+            In Lineup ({watchlist.length})
           </button>
 
           <button
             type="button"
             onClick={() => setStatusFilter(statusFilter === 'Research Needed' ? 'All' : 'Research Needed')}
-            className={`text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap transition-all ${
+            className={`text-xs px-3 py-1 rounded border font-medium whitespace-nowrap transition-all ${
               statusFilter === 'Research Needed'
                 ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                : 'bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-zinc-200'
+                : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200'
             }`}
           >
             Research Needed
@@ -405,12 +399,12 @@ export default function Collection() {
 
         {/* Detailed Collapsible Filter Panel */}
         {showFilterDrawer && (
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#121520] border border-zinc-800/90 shadow-xl space-y-4 animate-in fade-in duration-200">
+          <div className="p-4 sm:p-5 rounded-xl bg-[#10121a] border border-zinc-800 shadow-xl space-y-4 animate-in fade-in duration-200 font-mono">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal size={16} className="text-amber-400" />
-                <h3 className="text-sm font-bold text-zinc-200 uppercase tracking-wider font-mono">
-                  Collection Filter Parameters
+                <SlidersHorizontal size={15} className="text-amber-400" />
+                <h3 className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+                  Roster Filter Parameters
                 </h3>
               </div>
               <button
@@ -419,20 +413,20 @@ export default function Collection() {
                 className="text-xs text-zinc-400 hover:text-amber-400 flex items-center gap-1 transition-colors"
               >
                 <RotateCcw size={12} />
-                <span>Reset all filters</span>
+                <span>Reset all</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
               {/* Folder Selector */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
-                  Physical Folder
+                <label className="font-bold text-zinc-400 uppercase tracking-wider">
+                  Folder Structure
                 </label>
                 <select
                   value={selectedFolder}
                   onChange={e => setSelectedFolder(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-zinc-200 focus:outline-none focus:border-zinc-700"
                 >
                   {availableFolders.map(f => (
                     <option key={f} value={f}>
@@ -444,13 +438,13 @@ export default function Collection() {
 
               {/* Resolution Selector */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
+                <label className="font-bold text-zinc-400 uppercase tracking-wider">
                   Resolution
                 </label>
                 <select
                   value={selectedResolution}
                   onChange={e => setSelectedResolution(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-zinc-200 focus:outline-none focus:border-zinc-700"
                 >
                   {availableResolutions.map(r => (
                     <option key={r} value={r}>
@@ -462,36 +456,36 @@ export default function Collection() {
 
               {/* Status / Provenance */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
-                  Provenance & Status
+                <label className="font-bold text-zinc-400 uppercase tracking-wider">
+                  Status &amp; Integrity
                 </label>
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-zinc-200 focus:outline-none focus:border-zinc-700"
                 >
-                  <option value="All">All Provenance</option>
+                  <option value="All">All Statuses</option>
                   <option value="Research Needed">Research Needed</option>
-                  <option value="Mismatch">Folder / Count Mismatch</option>
-                  <option value="Real Dataset">Real Physical Inventory</option>
-                  <option value="Seed Dataset">Sample Seed Dataset</option>
+                  <option value="Mismatch">Folder Mismatch</option>
+                  <option value="Real Dataset">Verified Physical</option>
+                  <option value="Seed Dataset">Sample Seed Data</option>
                 </select>
               </div>
 
               {/* Personal Rating Filter */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
-                  Rating
+                <label className="font-bold text-zinc-400 uppercase tracking-wider">
+                  Rating Index
                 </label>
                 <select
                   value={ratingFilter}
                   onChange={e => setRatingFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-zinc-200 focus:outline-none focus:border-zinc-700"
                 >
                   <option value="all">Any Rating</option>
                   <option value="5">★ 5 Stars Only</option>
-                  <option value="4">★ 4 Stars & Above</option>
-                  <option value="3">★ 3 Stars & Above</option>
+                  <option value="4">★ 4 Stars &amp; Above</option>
+                  <option value="3">★ 3 Stars &amp; Above</option>
                 </select>
               </div>
             </div>
@@ -500,40 +494,40 @@ export default function Collection() {
 
         {/* Active Filter Tags Row */}
         {activeFilterCount > 0 && (
-          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs">
-            <span className="text-zinc-500 font-mono text-[11px]">Active:</span>
+          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs font-mono">
+            <span className="text-zinc-500 text-[11px]">Active:</span>
             {search && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Search: "{search}"
                 <button onClick={() => setSearch('')}><X size={12} /></button>
               </span>
             )}
             {selectedFolder !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Folder: {selectedFolder}
                 <button onClick={() => setSelectedFolder('All')}><X size={12} /></button>
               </span>
             )}
             {selectedResolution !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Res: {selectedResolution}
                 <button onClick={() => setSelectedResolution('All')}><X size={12} /></button>
               </span>
             )}
             {statusFilter !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Status: {statusFilter}
                 <button onClick={() => setStatusFilter('All')}><X size={12} /></button>
               </span>
             )}
             {watchFilter !== 'all' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Activity: {watchFilter}
                 <button onClick={() => setWatchFilter('all')}><X size={12} /></button>
               </span>
             )}
             {ratingFilter !== 'all' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700">
                 Rating: ★ {ratingFilter}+
                 <button onClick={() => setRatingFilter('all')}><X size={12} /></button>
               </span>
@@ -552,39 +546,40 @@ export default function Collection() {
       {filteredVideos.length === 0 ? (
         <EmptyState
           icon={<Search size={28} />}
-          title="No matching collection records"
+          title="No matching roster records"
           description={
             videos.length === 0
-              ? "Your T9 registry has no videos registered yet. Ingest your physical inventory in Settings or Quick Add individual videos."
-              : "No videos match your active filter and search criteria. Try clearing some filters or searching for another term."
+              ? "Your ROSTER registry has no items recorded yet. Use Quick Intake to register your media."
+              : "No records match your active filter parameters. Try clearing some filters or searching for another term."
           }
           action={
             videos.length === 0 ? (
               <Link
                 to="/quick-add"
-                className="px-4 py-2 rounded-xl bg-amber-500 text-zinc-950 font-bold text-xs"
+                className="px-4 py-2 rounded-lg bg-amber-500 text-zinc-950 font-bold text-xs font-mono uppercase"
               >
-                Quick Add Video
+                Intake Media
               </Link>
             ) : (
               <button
                 type="button"
                 onClick={resetFilters}
-                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold"
+                className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold font-mono"
               >
-                Reset All Filters
+                Reset Filters
               </button>
             )
           }
         />
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-          {filteredVideos.map(video => {
+          {filteredVideos.map((video, idx) => {
             const hist = historiesMap.get(video.id);
             return (
               <MediaCard
                 key={video.id}
                 video={video}
+                rankNumber={idx + 1}
                 inWatchlist={watchlist.some(w => w.videoId === video.id)}
                 onToggleWatchlist={handleToggleWatchlist}
                 timesWatched={hist?.timesWatched || 0}
@@ -594,13 +589,14 @@ export default function Collection() {
           })}
         </div>
       ) : (
-        <div className="rounded-2xl bg-[#121520] border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800/60 shadow-lg">
-          {filteredVideos.map(video => {
+        <div className="rounded-xl bg-[#10121a] border border-zinc-800/90 overflow-hidden divide-y divide-zinc-800/60 shadow-xl">
+          {filteredVideos.map((video, idx) => {
             const hist = historiesMap.get(video.id);
             return (
               <CompactMediaRow
                 key={video.id}
                 video={video}
+                rankNumber={idx + 1}
                 inWatchlist={watchlist.some(w => w.videoId === video.id)}
                 onToggleWatchlist={handleToggleWatchlist}
                 timesWatched={hist?.timesWatched || 0}

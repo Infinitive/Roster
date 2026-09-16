@@ -9,8 +9,6 @@ import {
   Plus, 
   Clock, 
   Star, 
-  Sparkles, 
-  Calendar, 
   Film,
   Zap
 } from 'lucide-react';
@@ -61,45 +59,46 @@ export default function Sessions() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
       <PageHeader
-        title="Sessions"
+        sectionNumber="ROTATION LOGBOOK"
+        title="Session Ledger"
         icon={<Flame size={24} className="text-amber-500" />}
         badge={
-          <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
+          <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-zinc-800">
             {sessions.length} Recorded
           </span>
         }
-        subtitle="Tactile behavioral memory, video pairings, and encounter logs."
+        subtitle="Tactile behavioral memory, video pairings, and rotation encounter history."
         actions={
           <Link 
             to="/sessions/new" 
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md shadow-amber-950/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs font-mono uppercase tracking-wider shadow-lg shadow-amber-950/40 transition-all active:scale-95"
           >
-            <Plus size={16} strokeWidth={2.5} />
-            <span>Log Session</span>
+            <Plus size={15} strokeWidth={2.5} />
+            <span>Log Rotation</span>
           </Link>
         }
       />
 
       {/* Activity Summary Bar */}
       {sessions.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-[#121520] border border-zinc-800/80 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-[#10121a] border border-zinc-800 text-xs font-mono">
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase font-mono text-zinc-500">Total Logged</span>
-            <p className="text-xl font-bold text-white">{sessions.length}</p>
+            <span className="text-[10px] uppercase text-zinc-500">Total Logged</span>
+            <p className="text-xl font-black text-white">{sessions.length}</p>
           </div>
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase font-mono text-zinc-500">Average Rating</span>
-            <p className="text-xl font-bold text-amber-400">
+            <span className="text-[10px] uppercase text-zinc-500">Average Rating</span>
+            <p className="text-xl font-black text-amber-400">
               {avgRating ? `★ ${avgRating}` : '—'}
             </p>
           </div>
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase font-mono text-zinc-500">Strong Combos</span>
-            <p className="text-xl font-bold text-indigo-400">{strongCombos}</p>
+            <span className="text-[10px] uppercase text-zinc-500">Strong Combos</span>
+            <p className="text-xl font-black text-amber-300">{strongCombos}</p>
           </div>
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase font-mono text-zinc-500">Total Duration</span>
-            <p className="text-xl font-bold text-zinc-300">
+            <span className="text-[10px] uppercase text-zinc-500">Total Duration</span>
+            <p className="text-xl font-black text-zinc-300">
               {sessions.reduce((acc, s) => acc + (s.duration || 0), 0)} min
             </p>
           </div>
@@ -110,28 +109,28 @@ export default function Sessions() {
       {loading ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] text-zinc-500 space-y-3">
           <div className="w-8 h-8 rounded-full border-2 border-amber-500/20 border-t-amber-500 animate-spin" />
-          <p className="text-xs uppercase tracking-widest font-mono">Loading Sessions History...</p>
+          <p className="text-xs uppercase tracking-widest font-mono">Loading Rotation History...</p>
         </div>
       ) : sessions.length === 0 ? (
         <EmptyState
           icon={<Flame size={28} className="text-rose-400" />}
-          title="No sessions logged yet"
+          title="No rotations logged yet"
           description="Capture your sessions to build true behavioral memory. Record ratings, video combinations, vibes, and outcome statuses."
           action={
             <Link
               to="/sessions/new"
-              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs"
+              className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs font-mono uppercase"
             >
-              Log Your First Session
+              Log First Rotation
             </Link>
           }
         />
       ) : (
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           {sessions.map(session => (
             <div
               key={session.id}
-              className="group p-5 rounded-2xl bg-[#121520] border border-zinc-800/80 hover:border-zinc-700 transition-all shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+              className="group p-5 rounded-xl bg-[#10121a] border border-zinc-800 hover:border-zinc-700 transition-all shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
               <div className="space-y-2.5 flex-1 min-w-0">
                 {/* Session Header Badges */}
@@ -146,7 +145,7 @@ export default function Sessions() {
                   </span>
 
                   {session.rating && (
-                    <span className="flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-md bg-amber-950/60 text-amber-300 border border-amber-800/50">
+                    <span className="flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800/50 font-mono">
                       <Star size={11} className="fill-amber-400 text-amber-400" />
                       {session.rating}
                     </span>
@@ -160,7 +159,7 @@ export default function Sessions() {
                   )}
 
                   {session.strongCombination && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/60 flex items-center gap-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800/60 flex items-center gap-1 font-mono">
                       <Zap size={10} />
                       Strong Combo
                     </span>
@@ -173,7 +172,7 @@ export default function Sessions() {
                   )}
 
                   {session.orgasmStatus && (
-                    <span className="text-[11px] font-mono text-zinc-400 px-2 py-0.5 rounded bg-zinc-900/60 border border-zinc-800/60">
+                    <span className="text-[11px] font-mono text-zinc-400 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800">
                       {session.orgasmStatus}
                     </span>
                   )}
@@ -190,10 +189,10 @@ export default function Sessions() {
                         <Link
                           key={vid.id}
                           to={`/video/${vid.id}`}
-                          className="text-xs px-2.5 py-1 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors flex items-center gap-1.5"
+                          className="text-xs px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors flex items-center gap-1.5 font-mono"
                         >
                           <Film size={12} className="text-zinc-500" />
-                          <span className="font-semibold text-zinc-200">
+                          <span className="font-bold text-zinc-200">
                             {vid.performerDisplay || 'Unknown'}:
                           </span>
                           <span className="truncate max-w-xs text-zinc-400">
@@ -202,7 +201,7 @@ export default function Sessions() {
                         </Link>
                       ))
                     ) : (
-                      <span className="text-xs text-zinc-500">Unlinked or legacy IDs</span>
+                      <span className="text-xs text-zinc-500 font-mono">Unlinked or legacy IDs</span>
                     )}
                   </div>
                 </div>
@@ -215,10 +214,10 @@ export default function Sessions() {
               </div>
 
               {/* Action Button */}
-              <div className="flex items-center gap-2 flex-none pt-2 md:pt-0">
+              <div className="flex items-center gap-2 flex-none pt-2 md:pt-0 font-mono">
                 <Link
                   to={`/sessions/${session.id}`}
-                  className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors"
+                  className="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-colors uppercase tracking-wider"
                 >
                   Edit Log
                 </Link>

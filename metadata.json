@@ -1,6 +1,6 @@
 {
-  "name": "T9 Collection Registry",
-  "description": "Local-first PWA for managing and analyzing the T9 collection.",
+  "name": "ROSTER",
+  "description": "Private collection registry, memory, and discovery system.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

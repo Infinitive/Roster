@@ -9,7 +9,8 @@ import {
   PlaySquare, 
   Star, 
   AlertTriangle, 
-  HelpCircle 
+  HelpCircle,
+  Flame
 } from 'lucide-react';
 
 interface CompactMediaRowProps {
@@ -18,26 +19,34 @@ interface CompactMediaRowProps {
   inWatchlist?: boolean;
   onToggleWatchlist?: (videoId: string) => void;
   timesWatched?: number;
+  rankNumber?: number | string;
 }
 
 export default function CompactMediaRow({
   video,
   inWatchlist = false,
   onToggleWatchlist,
-  timesWatched = 0
+  timesWatched = 0,
+  rankNumber
 }: CompactMediaRowProps) {
-  const initials = (video.performerDisplay || video.title || 'T9')
+  const initials = (video.performerDisplay || video.title || 'RO')
     .split(/[\s&,/]+/)
     .filter(Boolean)
     .slice(0, 2)
     .map(w => w[0]?.toUpperCase())
-    .join('') || 'T9';
+    .join('') || 'RO';
 
   return (
-    <div className="flex items-center justify-between p-3.5 hover:bg-zinc-800/40 border-b border-zinc-800/50 transition-colors gap-3 group">
+    <div className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-zinc-800/40 border-b border-zinc-800/60 transition-colors gap-3 group">
       <div className="flex items-center gap-3 min-w-0 flex-1">
+        {rankNumber && (
+          <span className="font-mono text-xs font-black text-amber-400/80 tracking-tighter w-5 text-center flex-none">
+            {typeof rankNumber === 'number' ? String(rankNumber).padStart(2, '0') : rankNumber}
+          </span>
+        )}
+
         {/* Monogram */}
-        <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-xs font-bold text-zinc-300 flex-none group-hover:border-zinc-500">
+        <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-700/70 flex items-center justify-center text-xs font-bold font-mono text-zinc-300 flex-none group-hover:border-amber-500/50">
           {initials}
         </div>
 
@@ -46,7 +55,7 @@ export default function CompactMediaRow({
           <div className="flex items-center gap-2 flex-wrap">
             <Link
               to={`/video/${video.id}`}
-              className="text-sm font-semibold text-zinc-200 hover:text-white truncate"
+              className="text-sm font-bold text-zinc-200 hover:text-amber-300 transition-colors truncate"
             >
               {video.performerDisplay || 'Unknown Performers'}
             </Link>
@@ -57,7 +66,7 @@ export default function CompactMediaRow({
 
             {video.datasetType === 'real' && (
               <Badge variant="real" size="xs">
-                Real
+                Verified
               </Badge>
             )}
             {video.flags?.includes('research-needed') && (
@@ -72,7 +81,7 @@ export default function CompactMediaRow({
             )}
           </div>
 
-          <div className="flex items-center gap-2.5 text-xs text-zinc-500 mt-1 flex-wrap font-mono">
+          <div className="flex items-center gap-2.5 text-xs text-zinc-500 mt-0.5 flex-wrap font-mono">
             <span className="text-zinc-400">{video.folder}</span>
             {video.resolution && video.resolution !== 'Unknown' && (
               <>
@@ -91,18 +100,18 @@ export default function CompactMediaRow({
       </div>
 
       {/* Trailing Actions */}
-      <div className="flex items-center gap-2 flex-none">
+      <div className="flex items-center gap-2 flex-none font-mono">
         <PlayButton video={video} size="xs" variant="primary" />
 
         {video.personalRating && (
-          <span className="flex items-center gap-1 text-amber-400 text-xs font-medium px-2 py-0.5 rounded bg-amber-950/30 border border-amber-900/40">
-            <Star size={11} className="fill-amber-400" />
+          <span className="flex items-center gap-1 text-amber-400 text-xs font-bold px-2 py-0.5 rounded bg-amber-950/30 border border-amber-900/40">
+            <Star size={10} className="fill-amber-400" />
             {video.personalRating}
           </span>
         )}
 
         {timesWatched > 0 && (
-          <span className="text-[11px] text-zinc-500 px-1.5 py-0.5 rounded bg-zinc-900">
+          <span className="text-[11px] text-zinc-400 px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800">
             {timesWatched}x
           </span>
         )}
@@ -111,8 +120,8 @@ export default function CompactMediaRow({
           <button
             type="button"
             onClick={() => onToggleWatchlist(video.id)}
-            title={inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}
-            className={`p-1.5 rounded-lg transition-colors ${
+            title={inWatchlist ? 'In Queue' : 'Add to Queue'}
+            className={`p-1.5 rounded-md transition-colors ${
               inWatchlist ? 'text-amber-400' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
@@ -123,14 +132,14 @@ export default function CompactMediaRow({
         <Link
           to={`/sessions/new?videoId=${video.id}`}
           title="Log Session"
-          className="p-1.5 text-zinc-500 hover:text-zinc-200 transition-colors"
+          className="p-1.5 text-zinc-500 hover:text-rose-400 transition-colors"
         >
-          <PlaySquare size={14} />
+          <Flame size={14} />
         </Link>
 
         <Link
           to={`/video/${video.id}`}
-          className="text-xs px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors"
+          className="text-xs font-mono px-2.5 py-1 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors"
         >
           View
         </Link>

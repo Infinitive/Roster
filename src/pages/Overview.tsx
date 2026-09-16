@@ -7,9 +7,9 @@ import { generateDiscovery } from '../engines/discovery';
 import { FullAnalytics } from '../types/analytics';
 import { DiscoveryResult } from '../types/discovery';
 import MediaCard from '../components/ui/MediaCard';
-import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import PlayButton from '../components/ui/PlayButton';
+import RosterBrand from '../components/ui/RosterBrand';
 import { 
   Flame, 
   Sparkles, 
@@ -17,14 +17,15 @@ import {
   Plus, 
   Bookmark, 
   ArrowRight, 
-  Dices, 
-  CheckCircle2, 
-  AlertTriangle, 
   Clock, 
   HardDrive,
-  Star,
-  RefreshCw,
-  FolderTree
+  Star, 
+  RefreshCw, 
+  FolderTree,
+  Zap,
+  TrendingUp,
+  Activity,
+  ShieldCheck
 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -62,7 +63,7 @@ export default function Overview() {
       const calculated = calculateAnalytics(vids, sess, tags, perfs);
       setAnalytics(calculated);
 
-      // Generate a dynamic "Surprise Me" / "Blind Pull" spotlight if videos exist
+      // Generate dynamic spotlight pull
       if (vids.length > 0) {
         const disc = generateDiscovery('Surprise Me', calculated);
         setSpotlightResults(disc);
@@ -104,7 +105,7 @@ export default function Overview() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-zinc-500 space-y-3">
         <div className="w-8 h-8 rounded-full border-2 border-amber-500/20 border-t-amber-500 animate-spin" />
-        <p className="text-xs uppercase tracking-widest font-mono">Initializing Command Center...</p>
+        <p className="text-xs uppercase tracking-widest font-mono">Opening ROSTER Edition...</p>
       </div>
     );
   }
@@ -140,199 +141,210 @@ export default function Overview() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      {/* Editorial Archive Header */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#161a28] via-[#111420] to-[#0d0f17] border border-zinc-800/80 p-6 sm:p-8 shadow-xl">
+      {/* Editorial Publication Masthead */}
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#131622] via-[#0e1018] to-[#090a0f] border border-zinc-800/90 p-6 sm:p-8 shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-950/60 text-amber-300 border border-amber-800/60 font-mono">
-                Archive Overview
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-[0.2em] bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono">
+                Active Registry
               </span>
               {realVideos.length > 0 ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-950/60 text-blue-300 border border-blue-800/60 font-mono">
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-[0.15em] bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">
                   {realVideos.length} Physical Records
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-zinc-800 text-zinc-300 border border-zinc-700 font-mono">
-                  Seed Library Active
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-[0.15em] bg-zinc-800 text-zinc-300 border border-zinc-700 font-mono">
+                  Seed Roster
                 </span>
               )}
+              <span className="text-[10px] font-mono text-zinc-400">
+                PWA Local Edition
+              </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              T9 Collection Registry
-            </h1>
-            <p className="text-xs sm:text-sm text-zinc-400 font-normal leading-relaxed">
-              Private metadata, behavioral memory, and external playback. Physical files remain safe on your T9 drive.
-            </p>
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-none">
+                ROSTER
+              </h1>
+              <p className="text-xs sm:text-sm text-zinc-400 font-normal leading-relaxed mt-1.5 max-w-xl">
+                Private collection registry, rotation log, and discovery intelligence. Media files remain protected on your external storage.
+              </p>
+            </div>
           </div>
 
-          {/* Quick Primary Actions */}
+          {/* Action Hub */}
           <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap flex-none">
             <Link
               to="/sessions/new"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-bold text-xs tracking-wide shadow-lg shadow-amber-950/40 transition-all active:scale-95"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs uppercase tracking-wider font-mono shadow-lg shadow-amber-950/40 transition-all active:scale-95"
             >
               <Flame size={15} />
-              <span>Log Session</span>
+              <span>Log Rotation</span>
             </Link>
 
             <Link
               to="/collection"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700/60 text-zinc-200 font-semibold text-xs tracking-wide transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-200 font-bold text-xs uppercase tracking-wider font-mono transition-all"
             >
               <Film size={15} />
-              <span>Explore Library</span>
+              <span>Explore Roster</span>
             </Link>
           </div>
         </div>
 
-        {/* Intelligence Summary Row */}
-        <div className="mt-6 pt-6 border-t border-zinc-800/60 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Intelligence Ledger / Key Metrics Strip */}
+        <div className="mt-6 pt-6 border-t border-zinc-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Total Registry</span>
-            <p className="text-xl sm:text-2xl font-bold text-zinc-100">{videos.length}</p>
-            <span className="text-[11px] text-zinc-400">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-mono font-semibold">Total Roster</span>
+            <p className="text-2xl sm:text-3xl font-black text-white editorial-num">{videos.length}</p>
+            <span className="text-[11px] text-zinc-400 font-mono">
               {analytics?.collection.totalPerformers || 0} performers
             </span>
           </div>
 
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Logged Sessions</span>
-            <p className="text-xl sm:text-2xl font-bold text-amber-400">{sessions.length}</p>
-            <span className="text-[11px] text-zinc-400">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-mono font-semibold">Rotation Log</span>
+            <p className="text-2xl sm:text-3xl font-black text-amber-400 editorial-num">{sessions.length}</p>
+            <span className="text-[11px] text-zinc-400 font-mono">
               {analytics?.activity.recent30DaysSessions || 0} in last 30d
             </span>
           </div>
 
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Collection Use</span>
-            <p className="text-xl sm:text-2xl font-bold text-emerald-400">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-mono font-semibold">Utilization</span>
+            <p className="text-2xl sm:text-3xl font-black text-emerald-400 editorial-num">
               {analytics ? `${analytics.activity.collectionUtilization.toFixed(1)}%` : '0%'}
             </p>
-            <span className="text-[11px] text-zinc-400">
-              {analytics?.activity.uniqueVideosUsed || 0} unique used
+            <span className="text-[11px] text-zinc-400 font-mono">
+              {analytics?.activity.uniqueVideosUsed || 0} active in play
             </span>
           </div>
 
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Metadata Health</span>
-            <p className="text-xl sm:text-2xl font-bold text-zinc-200">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-mono font-semibold">Metadata Health</span>
+            <p className="text-2xl sm:text-3xl font-black text-zinc-200 editorial-num">
               {analytics ? `${(100 - analytics.health.percentageAffected).toFixed(0)}%` : '100%'}
             </p>
-            <span className="text-[11px] text-zinc-400">
-              {researchNeeded.length > 0 ? `${researchNeeded.length} need research` : 'High confidence'}
+            <span className="text-[11px] text-zinc-400 font-mono">
+              {researchNeeded.length > 0 ? `${researchNeeded.length} need review` : 'Verified high'}
             </span>
           </div>
         </div>
       </section>
 
-      {/* Discovery Spotlight: "Worth Exploring" */}
+      {/* Discovery Spotlight: "Scouting Report" */}
       {spotlight && (
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pb-1 border-b border-zinc-800/80">
             <div className="flex items-center gap-2">
-              <Sparkles size={18} className="text-indigo-400" />
-              <h2 className="text-lg font-bold tracking-tight text-zinc-200">Discovery Spotlight</h2>
-              <span className="text-[11px] text-zinc-400">· Curated recommendation</span>
+              <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-amber-400">
+                // 01 SCOUTING REPORT
+              </span>
+              <span className="text-zinc-600">·</span>
+              <span className="text-xs text-zinc-400 font-medium">Curated Pick</span>
             </div>
             <button
               type="button"
               onClick={handleNextSpotlight}
-              className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-indigo-200 px-2.5 py-1 rounded-lg bg-indigo-950/40 border border-indigo-900/40 hover:bg-indigo-900/40 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-amber-300 hover:text-amber-200 px-2.5 py-1 rounded bg-amber-950/30 border border-amber-800/40 hover:bg-amber-900/40 transition-colors font-mono"
             >
               <RefreshCw size={12} />
-              <span>Another Pull</span>
+              <span>Next Pick</span>
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-[#141828] to-[#10131d] border border-indigo-900/40 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="p-5 sm:p-6 rounded-xl bg-gradient-to-r from-[#121522] to-[#0d0f17] border border-amber-500/20 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div className="space-y-2 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">
+                <span className="text-[10px] uppercase font-bold tracking-[0.15em] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
                   {spotlight.reasonType}
                 </span>
-                <span className="text-xs text-zinc-400 font-medium">
+                <span className="text-xs text-zinc-400 font-mono">
                   {spotlight.video.folder}
                 </span>
                 {spotlight.video.personalRating && (
-                  <span className="flex items-center gap-1 text-amber-400 text-xs font-bold">
+                  <span className="flex items-center gap-1 text-amber-400 text-xs font-bold font-mono">
                     <Star size={12} className="fill-amber-400" />
                     {spotlight.video.personalRating}
                   </span>
                 )}
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">
-                <Link to={`/video/${spotlight.videoId}`} className="hover:underline">
+              <h3 className="text-lg sm:text-xl font-black text-white leading-snug">
+                <Link to={`/video/${spotlight.videoId}`} className="hover:underline hover:text-amber-300 transition-colors">
                   {spotlight.video.title || spotlight.video.filename}
                 </Link>
               </h3>
 
-              <p className="text-xs sm:text-sm text-zinc-300 line-clamp-1">
+              <p className="text-xs sm:text-sm text-zinc-300 font-medium">
                 {spotlight.video.performerDisplay || 'Unknown Performers'}
               </p>
 
-              <p className="text-xs text-indigo-200/80 bg-indigo-950/30 p-2.5 rounded-xl border border-indigo-900/30">
-                <strong className="font-semibold text-indigo-200">Why now: </strong>
+              <p className="text-xs text-zinc-300 bg-zinc-900/80 p-3 rounded-lg border border-zinc-800/80 leading-relaxed">
+                <strong className="font-mono text-amber-400 uppercase tracking-wider text-[10px] mr-1.5">Editorial Note:</strong>
                 {spotlight.reasonText}
               </p>
             </div>
 
-            <div className="flex items-center gap-2 flex-none">
+            <div className="flex items-center gap-2 flex-none font-mono">
               <PlayButton video={spotlight.video} size="sm" variant="primary" />
 
               <button
                 type="button"
                 onClick={() => handleToggleWatchlist(spotlight.videoId)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
                   watchlist.some(w => w.videoId === spotlight.videoId)
                     ? 'bg-amber-950/50 text-amber-300 border border-amber-800'
                     : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
                 }`}
               >
                 <Bookmark size={14} />
-                <span className="hidden sm:inline">{watchlist.some(w => w.videoId === spotlight.videoId) ? 'In Queue' : 'Queue'}</span>
+                <span>{watchlist.some(w => w.videoId === spotlight.videoId) ? 'In Lineup' : 'Queue'}</span>
               </button>
 
               <Link
                 to={`/sessions/new?videoId=${spotlight.videoId}`}
-                className="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs flex items-center gap-1.5 transition-colors border border-zinc-700"
+                className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs flex items-center gap-1.5 transition-colors border border-zinc-700"
               >
                 <Flame size={14} className="text-rose-400" />
-                <span className="hidden sm:inline">Session</span>
+                <span>Rotate</span>
               </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* Main 2-Column Grid: Left (Media Cards) & Right (Activity / Queue / Breakdown) */}
+      {/* Main 2-Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column (2 Cols): Rediscover & Recently Added */}
+        {/* Left Column (2 Cols): High Signal & Fresh Intake */}
         <div className="lg:col-span-2 space-y-8">
-          {/* High Rated / Rediscover */}
+          {/* High Rated / Proven Leaders */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-1 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
-                <Star size={18} className="text-amber-400 fill-amber-400/20" />
-                <h2 className="text-lg font-bold tracking-tight text-zinc-200">High-Signal Content</h2>
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-amber-400">
+                  // 02 IN ROTATION
+                </span>
+                <span className="text-zinc-600">·</span>
+                <span className="text-xs text-zinc-400 font-medium">Proven High-Signal Leaders</span>
               </div>
-              <Link to="/collection" className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1">
-                View all <ArrowRight size={12} />
+              <Link to="/collection" className="text-xs text-amber-400 hover:text-amber-300 font-mono flex items-center gap-1">
+                All Roster <ArrowRight size={12} />
               </Link>
             </div>
 
             {highRated.length === 0 ? (
-              <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-400 text-center">
-                Rate videos in your collection (★ 4 or 5) to surface proven high-signal performers here.
+              <div className="p-6 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-400 text-center font-mono">
+                Rate items (★ 4 or 5) to surface proven leaders in your active rotation.
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {highRated.map(video => (
+                {highRated.map((video, idx) => (
                   <MediaCard
                     key={video.id}
                     video={video}
+                    rankNumber={idx + 1}
                     inWatchlist={watchlist.some(w => w.videoId === video.id)}
                     onToggleWatchlist={handleToggleWatchlist}
                   />
@@ -341,35 +353,38 @@ export default function Overview() {
             )}
           </section>
 
-          {/* Recently Added */}
+          {/* Recently Added Intake */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-1 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
-                <Clock size={18} className="text-zinc-400" />
-                <h2 className="text-lg font-bold tracking-tight text-zinc-200">Recently Added to Registry</h2>
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-zinc-400">
+                  // 03 FRESH INTAKE
+                </span>
+                <span className="text-zinc-600">·</span>
+                <span className="text-xs text-zinc-400 font-medium">Recent Additions to Registry</span>
               </div>
-              <Link to="/collection" className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1">
-                Browse Library <ArrowRight size={12} />
+              <Link to="/collection" className="text-xs text-zinc-400 hover:text-zinc-200 font-mono flex items-center gap-1">
+                Full Registry <ArrowRight size={12} />
               </Link>
             </div>
 
             {recentlyAdded.length === 0 ? (
               <EmptyState
                 icon={<HardDrive size={24} />}
-                title="Your collection registry is empty"
-                description="Use Quick Add or load your physical T9 inventory in Settings to register your videos."
+                title="Roster is empty"
+                description="Use Quick Intake or configure physical storage in Desk to register your media."
                 action={
                   <Link
                     to="/quick-add"
-                    className="px-4 py-2 rounded-xl bg-amber-500 text-zinc-950 font-bold text-xs"
+                    className="px-4 py-2 rounded-lg bg-amber-500 text-zinc-950 font-bold text-xs font-mono uppercase"
                   >
-                    Quick Add Video
+                    Intake Video
                   </Link>
                 }
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recentlyAdded.map(video => (
+                {recentlyAdded.map((video, idx) => (
                   <MediaCard
                     key={video.id}
                     video={video}
@@ -382,24 +397,25 @@ export default function Overview() {
           </section>
         </div>
 
-        {/* Right Column: Recent Activity & Queue */}
+        {/* Right Column: Activity & Lineup Queue */}
         <div className="space-y-8">
           {/* Latest Session Card */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-1 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
-                <Flame size={18} className="text-rose-400" />
-                <h2 className="text-lg font-bold tracking-tight text-zinc-200">Latest Session</h2>
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-rose-400">
+                  // LAST ROTATION
+                </span>
               </div>
-              <Link to="/sessions" className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1">
-                History <ArrowRight size={12} />
+              <Link to="/sessions" className="text-xs text-rose-400 hover:text-rose-300 font-mono flex items-center gap-1">
+                Logbook <ArrowRight size={12} />
               </Link>
             </div>
 
             {latestSession ? (
-              <div className="p-5 rounded-2xl bg-[#12151f] border border-zinc-800/80 space-y-3">
+              <div className="p-4 sm:p-5 rounded-xl bg-[#10121a] border border-zinc-800/90 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-zinc-300">
+                  <span className="text-xs font-bold text-zinc-200 font-mono">
                     {new Date(latestSession.date).toLocaleDateString(undefined, { 
                       weekday: 'short', 
                       month: 'short', 
@@ -407,92 +423,86 @@ export default function Overview() {
                     })}
                   </span>
                   {latestSession.rating && (
-                    <span className="text-xs font-bold text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/40">
+                    <span className="text-xs font-bold text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/40 font-mono">
                       ★ {latestSession.rating}
                     </span>
                   )}
                 </div>
 
                 <div className="text-xs text-zinc-400 space-y-1">
-                  <p className="text-zinc-200 font-medium">
-                    {latestSessionVideos.map(v => v.performerDisplay || v.title).join(', ') || `${latestSession.videoIds.length} video(s)`}
+                  <p className="text-zinc-100 font-bold text-sm leading-snug">
+                    {latestSessionVideos.map(v => v.performerDisplay || v.title).join(', ') || `${latestSession.videoIds.length} item(s)`}
                   </p>
-                  <div className="flex gap-2 text-zinc-400 text-[11px] pt-1">
-                    {latestSession.duration && <span>{latestSession.duration} mins</span>}
+                  <div className="flex gap-2 text-zinc-400 text-[11px] pt-1 font-mono">
+                    {latestSession.duration && <span>{latestSession.duration}m</span>}
                     {latestSession.orgasmStatus && <span>• {latestSession.orgasmStatus}</span>}
                     {latestSession.vibe && <span>• {latestSession.vibe}</span>}
                   </div>
                 </div>
 
                 {latestSession.strongCombination && (
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-950/50 px-2 py-0.5 rounded border border-indigo-900/50 inline-block">
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/50 inline-block">
                     Strong Combination
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-5 rounded-2xl bg-[#12151f] border border-zinc-800/80 text-center space-y-2">
-                <p className="text-xs text-zinc-400">No sessions recorded yet.</p>
+              <div className="p-5 rounded-xl bg-[#10121a] border border-zinc-800/80 text-center space-y-2">
+                <p className="text-xs text-zinc-400 font-mono">No rotations logged yet.</p>
                 <Link
                   to="/sessions/new"
-                  className="inline-block text-xs font-semibold text-amber-400 hover:text-amber-300"
+                  className="inline-block text-xs font-bold font-mono text-amber-400 hover:text-amber-300"
                 >
-                  + Log First Session
+                  + Log First Rotation
                 </Link>
               </div>
             )}
           </section>
 
-          {/* Watchlist Queue Preview */}
+          {/* Watchlist / Lineup Preview */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-1 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
-                <Bookmark size={18} className="text-amber-400" />
-                <h2 className="text-lg font-bold tracking-tight text-zinc-200">Next in Queue</h2>
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-amber-400">
+                  // THE LINEUP
+                </span>
               </div>
-              <Link to="/watchlist" className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1">
-                Full Queue ({watchlist.length}) <ArrowRight size={12} />
+              <Link to="/watchlist" className="text-xs text-amber-400 hover:text-amber-300 font-mono flex items-center gap-1">
+                Queue ({watchlist.length}) <ArrowRight size={12} />
               </Link>
             </div>
 
             {queueItems.length === 0 ? (
-              <div className="p-5 rounded-2xl bg-[#12151f] border border-zinc-800/80 text-center space-y-2">
-                <p className="text-xs text-zinc-400">Queue is currently empty.</p>
-                <p className="text-[11px] text-zinc-400">Bookmark videos from the Library to line them up.</p>
+              <div className="p-5 rounded-xl bg-[#10121a] border border-zinc-800/80 text-center space-y-2">
+                <p className="text-xs text-zinc-400 font-mono">Lineup is empty.</p>
+                <p className="text-[11px] text-zinc-500">Add performers or items from the Roster to queue them.</p>
               </div>
             ) : (
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {queueItems.map(item => (
                   <div
                     key={item.id}
-                    className="p-3 rounded-xl bg-[#12151f] border border-zinc-800/80 flex items-center justify-between gap-3 hover:border-zinc-700 transition-colors"
+                    className="p-3 rounded-lg bg-[#10121a] border border-zinc-800/90 flex items-center justify-between gap-3 hover:border-zinc-700 transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <Link
                         to={`/video/${item.videoId}`}
-                        className="text-xs font-semibold text-zinc-200 hover:text-white truncate block"
+                        className="text-xs font-bold text-zinc-200 hover:text-amber-300 truncate block"
                       >
                         {item.video?.performerDisplay || item.video?.title}
                       </Link>
-                      <span className="text-[11px] text-zinc-400 truncate block">
+                      <span className="text-[11px] text-zinc-400 truncate block font-mono">
                         {item.video?.title || item.video?.filename}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 flex-none">
+                    <div className="flex items-center gap-1.5 flex-none font-mono">
                       {item.video && (
                         <PlayButton video={item.video} size="xs" variant="primary" />
                       )}
-                      <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded">
                         {item.status}
                       </span>
-                      <Link
-                        to={`/sessions/new?videoId=${item.videoId}`}
-                        title="Start Session"
-                        className="p-1 rounded-lg text-zinc-400 hover:text-rose-400 transition-colors"
-                      >
-                        <Flame size={14} />
-                      </Link>
                     </div>
                   </div>
                 ))}
@@ -500,25 +510,25 @@ export default function Overview() {
             )}
           </section>
 
-          {/* Quick Physical Folder Distribution */}
+          {/* Roster Structure / Folders */}
           {analytics && analytics.folders.length > 0 && (
-            <section className="p-5 rounded-2xl bg-[#12151f] border border-zinc-800/80 space-y-3">
-              <div className="flex items-center gap-2">
-                <FolderTree size={16} className="text-zinc-400" />
+            <section className="p-4 sm:p-5 rounded-xl bg-[#10121a] border border-zinc-800/90 space-y-3">
+              <div className="flex items-center gap-2 pb-1 border-b border-zinc-800/80">
+                <FolderTree size={14} className="text-zinc-400" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300 font-mono">
-                  Collection Layout
+                  Roster Structure
                 </h3>
               </div>
               <div className="space-y-2">
                 {analytics.folders.slice(0, 5).map(f => (
                   <div key={f.folder} className="space-y-1">
-                    <div className="flex justify-between text-xs">
+                    <div className="flex justify-between text-xs font-mono">
                       <span className="text-zinc-400">{f.folder}</span>
-                      <span className="text-zinc-500 font-mono">{f.count} ({f.collectionPercentage.toFixed(0)}%)</span>
+                      <span className="text-zinc-500">{f.count} ({f.collectionPercentage.toFixed(0)}%)</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
                       <div
-                        className="h-full bg-amber-500/80 rounded-full"
+                        className="h-full bg-amber-500 rounded-full"
                         style={{ width: `${f.collectionPercentage}%` }}
                       />
                     </div>

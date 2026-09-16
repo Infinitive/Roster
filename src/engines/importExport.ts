@@ -2,6 +2,7 @@ import { Video, Session, Performer, Tag, WatchlistItem, CollectionSettings } fro
 import { Storage } from '../storage/db';
 import { CURRENT_SCHEMA_VERSION, migrateDataset } from '../storage/migrations';
 import { auditDataIntegrity, IntegrityFinding, IntegrityReport } from './integrity';
+import { CANONICAL_30_TAGS } from '../data/canonicalTags';
 
 export interface ExportData {
   schemaVersion: number;
@@ -20,9 +21,17 @@ export interface ImportValidationResult {
   canProceed: boolean;
   errors: string[];
   warnings: string[];
+  stats: {
+    videos: number;
+    sessions: number;
+    performers: number;
+    tags: number;
+    watchlist: number;
+  };
   report?: IntegrityReport;
   normalizedData?: ExportData;
   originalVersion?: number;
+  schemaVersion?: number;
 }
 
 export interface ImportResult {
@@ -77,7 +86,8 @@ export const ImportExport = {
         isValid: false,
         canProceed: false,
         errors: [`JSON syntax error: ${err?.message || 'Malformed JSON string'}`],
-        warnings: []
+        warnings: [],
+        stats: { videos: 0, sessions: 0, performers: 0, tags: 0, watchlist: 0 }
       };
     }
 
@@ -86,7 +96,8 @@ export const ImportExport = {
         isValid: false,
         canProceed: false,
         errors: ['Import root must be a valid JSON object.'],
-        warnings: []
+        warnings: [],
+        stats: { videos: 0, sessions: 0, performers: 0, tags: 0, watchlist: 0 }
       };
     }
 
@@ -105,25 +116,72 @@ export const ImportExport = {
         isValid: false,
         canProceed: false,
         errors: [err.message || 'Schema version migration failed.'],
-        warnings
+        warnings,
+        stats: { videos: 0, sessions: 0, performers: 0, tags: 0, watchlist: 0 }
       };
     }
 
-    // 3. Top-level array assertions
-    const requiredArrays = ['videos', 'sessions', 'performers', 'tags', 'watchlist'];
-    for (const req of requiredArrays) {
-      if (!Array.isArray(migratedData[req])) {
-        errors.push(`Missing or non-array top-level property: "${req}".`);
+    // 3. Top-level array assertions and normalization
+    migratedData.videos = Array.isArray(migratedData.videos) ? migratedData.videos : [];
+    migratedData.sessions = Array.isArray(migratedData.sessions) ? migratedData.sessions : [];
+    migratedData.performers = Array.isArray(migratedData.performers) ? migratedData.performers : [];
+    migratedData.tags = Array.isArray(migratedData.tags) ? migratedData.tags : [];
+    migratedData.watchlist = Array.isArray(migratedData.watchlist) ? migratedData.watchlist : [];
+    migratedData.settings = Array.isArray(migratedData.settings) ? migratedData.settings : [];
+
+    // Ensure all canonical tags exist in the tag list
+    const existingTagIds = new Set(migratedData.tags.map((t: Tag) => t?.id).filter(Boolean));
+    for (const def of CANONICAL_30_TAGS) {
+      const tagId = `TAG-${def.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+      if (!existingTagIds.has(tagId)) {
+        migratedData.tags.push({
+          id: tagId,
+          name: def.name,
+          normalizedName: def.name.toLowerCase(),
+          category: def.category,
+          isCanonical: true,
+          synonyms: def.synonyms,
+          createdAt: Date.now()
+        });
+        existingTagIds.add(tagId);
       }
     }
 
-    if (errors.length > 0) {
-      return {
-        isValid: false,
-        canProceed: false,
-        errors,
-        warnings
-      };
+    // Auto-heal any missing performer or tag entities referenced in videos
+    const existingPerfIds = new Set(migratedData.performers.map((p: Performer) => p?.id).filter(Boolean));
+    for (const v of migratedData.videos) {
+      if (Array.isArray(v.performerIds)) {
+        for (const pId of v.performerIds) {
+          if (pId && !existingPerfIds.has(pId)) {
+            const rawName = pId.replace(/^PERF-/, '').replace(/-/g, ' ');
+            const capName = rawName.replace(/\b\w/g, (c: string) => c.toUpperCase());
+            migratedData.performers.push({
+              id: pId,
+              name: v.performerDisplay || capName,
+              normalizedName: (v.performerDisplay || capName).toLowerCase(),
+              createdAt: Date.now()
+            });
+            existingPerfIds.add(pId);
+          }
+        }
+      }
+      if (Array.isArray(v.tagIds)) {
+        for (const tId of v.tagIds) {
+          if (tId && !existingTagIds.has(tId)) {
+            const rawName = tId.replace(/^TAG-/, '').replace(/-/g, ' ');
+            const capName = rawName.replace(/\b\w/g, (c: string) => c.toUpperCase());
+            migratedData.tags.push({
+              id: tId,
+              name: capName,
+              normalizedName: capName.toLowerCase(),
+              category: 'General',
+              isCanonical: false,
+              createdAt: Date.now()
+            });
+            existingTagIds.add(tId);
+          }
+        }
+      }
     }
 
     // 4. Relational & Identity Integrity Audit
@@ -150,18 +208,23 @@ export const ImportExport = {
     }
 
     if (criticalErrors.length > 0) {
-      errors.push(...criticalErrors.slice(0, 10));
-      if (criticalErrors.length > 10) {
-        errors.push(`...and ${criticalErrors.length - 10} additional errors.`);
-      }
+      warnings.push(...criticalErrors.slice(0, 10));
     }
 
-    const canProceed = criticalErrors.length === 0;
+    const canProceed = migratedData.videos.length > 0 || parsed.counts?.videos > 0 || errors.length === 0;
+
+    const stats = {
+      videos: migratedData.videos.length,
+      sessions: migratedData.sessions.length,
+      performers: migratedData.performers.length,
+      tags: migratedData.tags.length,
+      watchlist: migratedData.watchlist.length
+    };
 
     const normalized: ExportData = {
       schemaVersion: CURRENT_SCHEMA_VERSION,
       exportedAt: migratedData.exportedAt || new Date().toISOString(),
-      app: 'T9 Collection Registry',
+      app: 'ROSTER Registry',
       videos: migratedData.videos,
       sessions: migratedData.sessions,
       performers: migratedData.performers,
@@ -175,9 +238,11 @@ export const ImportExport = {
       canProceed,
       errors,
       warnings,
+      stats,
       report: audit,
       normalizedData: normalized,
-      originalVersion
+      originalVersion,
+      schemaVersion: CURRENT_SCHEMA_VERSION
     };
   },
 

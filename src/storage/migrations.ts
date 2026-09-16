@@ -190,7 +190,9 @@ export function migrateDataset(data: any): { data: any; originalVersion: number;
     throw new Error('Invalid dataset: root must be a JSON object.');
   }
 
-  const rawVersion = typeof data.schemaVersion === 'number' ? data.schemaVersion : 1;
+  const rawVersion = typeof data.schemaVersion === 'number'
+    ? data.schemaVersion
+    : (typeof data.version === 'number' ? data.version : 1);
 
   if (rawVersion > CURRENT_SCHEMA_VERSION) {
     throw new Error(

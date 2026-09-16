@@ -185,11 +185,25 @@ export default function More() {
 
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const content = ev.target?.result as string;
-      setImportFileContent(content);
-      const validation = ImportExport.validateImportData(content);
-      setValidationResult(validation);
-      setImportResult(null);
+      try {
+        const content = ev.target?.result as string;
+        setImportFileContent(content);
+        const validation = ImportExport.validateImportData(content);
+        setValidationResult(validation);
+        setImportResult(null);
+        if (!validation.isValid && !validation.canProceed) {
+          setMsg({
+            text: `Validation Notice: ${validation.errors[0] || 'Unable to parse registry file.'}`,
+            type: 'error'
+          });
+        }
+      } catch (err: any) {
+        console.error('File parsing error:', err);
+        setMsg({ text: `Failed to read file: ${err?.message || 'Unknown error'}`, type: 'error' });
+      }
+    };
+    reader.onerror = () => {
+      setMsg({ text: 'Error reading selected file from disk.', type: 'error' });
     };
     reader.readAsText(file);
   };
@@ -587,7 +601,7 @@ export default function More() {
                       <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-zinc-200 capitalize">{f.category}</span>
-                          <span className="text-[10px] text-zinc-500 font-mono">[{f.code}]</span>
+                          <span className="text-[10px] text-zinc-500 font-mono">[{f.id}]</span>
                         </div>
                         <p className="text-zinc-400">{f.message}</p>
                       </div>
@@ -650,26 +664,51 @@ export default function More() {
                   accept=".json"
                   ref={fileInputRef}
                   onChange={handleFileSelect}
-                  className="text-xs text-zinc-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer"
+                  className="w-full text-xs text-zinc-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer"
                 />
 
                 {validationResult && (
                   <div className="pt-2 space-y-3">
-                    <div className="text-xs p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
-                      <span className="font-bold text-zinc-200 block">
-                        File: {validationResult.stats.videos} videos, {validationResult.stats.sessions} sessions
-                      </span>
-                      <span className="text-[11px] text-zinc-500 block">
-                        Schema Version: {validationResult.schemaVersion}
-                      </span>
+                    <div className="text-xs p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-zinc-200 font-mono text-xs uppercase tracking-wider">
+                          Ready to Ingest
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                          v{validationResult.schemaVersion || 2}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-zinc-300 pt-1">
+                        <div className="p-1.5 rounded bg-zinc-950/60 border border-zinc-800/50">
+                          <span className="text-zinc-500 block text-[10px]">VIDEOS</span>
+                          <span className="font-bold text-amber-400 text-sm">{validationResult.stats.videos}</span>
+                        </div>
+                        <div className="p-1.5 rounded bg-zinc-950/60 border border-zinc-800/50">
+                          <span className="text-zinc-500 block text-[10px]">ROTATIONS</span>
+                          <span className="font-bold text-amber-400 text-sm">{validationResult.stats.sessions}</span>
+                        </div>
+                        <div className="p-1.5 rounded bg-zinc-950/60 border border-zinc-800/50">
+                          <span className="text-zinc-500 block text-[10px]">PERFORMERS</span>
+                          <span className="font-bold text-zinc-200 text-sm">{validationResult.stats.performers}</span>
+                        </div>
+                        <div className="p-1.5 rounded bg-zinc-950/60 border border-zinc-800/50">
+                          <span className="text-zinc-500 block text-[10px]">TAGS</span>
+                          <span className="font-bold text-zinc-200 text-sm">{validationResult.stats.tags}</span>
+                        </div>
+                      </div>
+                      {validationResult.warnings.length > 0 && (
+                        <p className="text-[10px] text-amber-400/90 font-mono mt-1">
+                          Notice: {validationResult.warnings[0]}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => setImportMode('merge')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border ${
-                          importMode === 'merge' ? 'bg-amber-500 text-zinc-950 border-amber-400' : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold font-mono uppercase tracking-wider border transition-all ${
+                          importMode === 'merge' ? 'bg-amber-500 text-zinc-950 border-amber-400 shadow-md shadow-amber-950/30' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700'
                         }`}
                       >
                         Merge
@@ -677,8 +716,8 @@ export default function More() {
                       <button
                         type="button"
                         onClick={() => setImportMode('replace')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border ${
-                          importMode === 'replace' ? 'bg-red-500 text-white border-red-400' : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold font-mono uppercase tracking-wider border transition-all ${
+                          importMode === 'replace' ? 'bg-red-500 text-white border-red-400 shadow-md shadow-red-950/30' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700'
                         }`}
                       >
                         Replace All
@@ -688,10 +727,10 @@ export default function More() {
                     <button
                       type="button"
                       onClick={executeImport}
-                      disabled={isImporting}
-                      className="w-full py-2.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-md transition-all active:scale-95"
+                      disabled={isImporting || !validationResult.canProceed}
+                      className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-zinc-950 font-black text-xs uppercase tracking-wider font-mono shadow-md transition-all active:scale-95"
                     >
-                      {isImporting ? 'Importing...' : 'Execute Restore'}
+                      {isImporting ? 'Restoring Database...' : `Execute ${importMode === 'replace' ? 'Full Replace' : 'Merge'} Restore`}
                     </button>
                   </div>
                 )}
